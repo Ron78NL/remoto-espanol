@@ -119,6 +119,20 @@ header { display: grid; gap: 14px; }
 .b-no { background: var(--no-soft); color: var(--no); }
 .b-tag { background: transparent; color: var(--muted); border: 1px solid var(--line); font-weight: 400; }
 .card p { font-size: 0.98rem; }
+.seg { border-top: 1px solid var(--line); padding-top: 8px; }
+.seg summary { cursor: pointer; font-size: 0.92rem; color: var(--muted); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.seg[open] { display: grid; gap: 8px; }
+.seg-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 0.92rem; }
+.seg-row.col { flex-direction: column; align-items: stretch; }
+.seg select, .seg textarea { font: inherit; font-size: 0.95rem; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; }
+.seg textarea { resize: vertical; width: 100%; min-height: 2.6em; }
+.fase { font-size: 0.8rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap; background: var(--accent-soft); color: var(--accent); }
+.f-entrevista, .f-solicitado { background: var(--check-soft); color: var(--check); }
+.f-conseguido { background: var(--ok-soft); color: var(--ok); }
+.f-rechazado { background: var(--bg); color: var(--muted); border: 1px solid var(--line); }
+.res-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.res-list li { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; padding-block: 8px; border-top: 1px solid var(--line); }
+.res-nota { color: var(--muted); font-size: 0.92rem; flex-basis: 100%; overflow-wrap: anywhere; }
 .card-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
 .links { display: flex; flex-wrap: wrap; gap: 8px; }
 .go { display: inline-block; background: var(--accent); color: #fff; text-decoration: none; font-weight: 700; font-size: 0.95rem; padding: 8px 14px; border-radius: 8px; }
@@ -192,6 +206,11 @@ footer a { color: var(--muted); }
     <li><div class="txt"><h3><span lang="es">Busca un cliente fijo en España o Latinoamérica</span><span lang="nl">Zoek een vaste klant in Spanje of Latijns-Amerika</span></h3>
       <p class="muted"><span lang="es">Con experiencia, postula a puestos de soporte como contractor (Get on Board, We Remoto, Torre). Una empresa que te paga cada mes da más estabilidad que tareas sueltas.</span><span lang="nl">Met wat ervaring solliciteer je als contractor voor supportjobs (Get on Board, We Remoto, Torre). Eén bedrijf dat elke maand betaalt geeft meer zekerheid dan losse taken.</span></p></div></li>
   </ol>
+</section>
+
+<section aria-labelledby="h-res">
+  <h2 id="h-res"><span lang="es">Mis solicitudes</span><span lang="nl">Mijn sollicitaties</span></h2>
+  <div class="box" id="resumen"></div>
 </section>
 
 <section aria-labelledby="h-plat">
@@ -328,6 +347,19 @@ footer a { color: var(--muted); }
     quitar: { es: "✕ No me sirve", nl: "✕ Niet nuttig" },
     quitarTip: { es: "Quitar de la lista (se puede recuperar abajo)", nl: "Uit de lijst halen (onderaan terug te zetten)" },
     volver: { es: "Volver a la lista", nl: "Terugzetten" },
+    seg: { es: "Mi seguimiento", nl: "Mijn opvolging" },
+    faseQ: { es: "¿En qué punto estás?", nl: "Hoe ver sta je?" },
+    notaQ: { es: "Nota", nl: "Notitie" },
+    notaPh: { es: "Ej.: envié el CV el 14/11, contacto: Laura", nl: "Bv.: cv gestuurd op 14/11, contact: Laura" },
+    fase: {
+      "":         { es: "Nada todavía", nl: "Nog niets" },
+      interesa:   { es: "Me interesa", nl: "Interessant" },
+      solicitado: { es: "Solicitado", nl: "Gesolliciteerd" },
+      entrevista: { es: "Entrevista", nl: "Gesprek" },
+      rechazado:  { es: "No salió", nl: "Afgewezen" },
+      conseguido: { es: "¡Conseguido!", nl: "Gelukt!" }
+    },
+    resVacio: { es: "Todavía no sigues ninguna empresa. Abre «Mi seguimiento» en una tarjeta y elige en qué punto estás.", nl: "Je volgt nog geen bedrijven op. Open «Mijn opvolging» op een kaart en kies hoe ver je staat." },
     vacio: { es: "No queda nada en esta categoría. Las que quitaste están abajo, en «Quitadas».", nl: "Niets meer over in deze categorie. Wat je weghaalde staat onderaan bij «Weggehaald»." },
     prog: { es: "probadas", nl: "geprobeerd" },
     of:   { es: "de", nl: "van" }
@@ -517,7 +549,7 @@ footer a { color: var(--muted); }
     } else if (SYNC_URL) {
       // Google-rekenblad: zelfde keuzes op gsm en laptop. Gewone tekst-POST, zodat de browser geen extra controle vraagt.
       colaEscritura[id] = prev.then(function () {
-        return fetch(SYNC_URL, { method: "POST", body: JSON.stringify({ id: id, hecho: !!nuevo.hecho, oculto: !!nuevo.oculto }) })
+        return fetch(SYNC_URL, { method: "POST", body: JSON.stringify({ id: id, hecho: !!nuevo.hecho, oculto: !!nuevo.oculto, fase: nuevo.fase || "", nota: nuevo.nota || "" }) })
           .then(function (r) { return r.json(); })
           .then(function (d) { if (!d || !d.ok) throw new Error("no ok"); setSync("okg"); });
       }).catch(function () { setSync("errorg"); });
@@ -600,7 +632,37 @@ footer a { color: var(--muted); }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function bi(o) { return '<span lang="es">' + esc(o.es) + '</span><span lang="nl">' + esc(o.nl) + '</span>'; }
 
+  // Opvolging: per bedrijf een fase en een korte notitie.
+  var FASES = ["", "interesa", "solicitado", "entrevista", "rechazado", "conseguido"];
+  function faseLabel(f) { return T.fase[f || ""][lang]; }
+  function seguimientoHtml(p) {
+    var s = st(p.id), f = s.fase || "", nota = s.nota || "";
+    var opts = FASES.map(function (x) { return '<option value="' + x + '"' + (x === f ? ' selected' : '') + '>' + esc(faseLabel(x)) + '</option>'; }).join("");
+    return '<details class="seg"' + (f || nota ? ' open' : '') + '><summary>' + bi(T.seg) +
+      (f ? ' <span class="fase f-' + f + '">' + esc(faseLabel(f)) + '</span>' : '') + '</summary>' +
+      '<label class="seg-row" for="fase-' + p.id + '">' + bi(T.faseQ) +
+      '<select id="fase-' + p.id + '" data-fase="' + p.id + '">' + opts + '</select></label>' +
+      '<label class="seg-row col" for="nota-' + p.id + '">' + bi(T.notaQ) +
+      '<textarea id="nota-' + p.id + '" data-nota="' + p.id + '" rows="2" maxlength="500" placeholder="' + esc(T.notaPh[lang]) + '">' + esc(nota) + '</textarea></label>' +
+      '</details>';
+  }
+  function renderResumen() {
+    var activos = P.filter(function (p) { return st(p.id).fase; });
+    var box = document.getElementById("resumen");
+    if (!activos.length) { box.innerHTML = '<p class="muted">' + bi(T.resVacio) + '</p>'; return; }
+    var orden = ["conseguido", "entrevista", "solicitado", "interesa", "rechazado"];
+    activos.sort(function (a, b) { return orden.indexOf(st(a.id).fase) - orden.indexOf(st(b.id).fase); });
+    var cuenta = orden.filter(function (f) { return activos.some(function (p) { return st(p.id).fase === f; }); })
+      .map(function (f) { return '<span class="fase f-' + f + '">' + esc(faseLabel(f)) + ' · ' + activos.filter(function (p) { return st(p.id).fase === f; }).length + '</span>'; }).join("");
+    box.innerHTML = '<div class="badges">' + cuenta + '</div><ul class="res-list">' + activos.map(function (p) {
+      var s = st(p.id);
+      return '<li><span class="fase f-' + s.fase + '">' + esc(faseLabel(s.fase)) + '</span><b>' + esc(p.name) + '</b>' +
+        (s.nota ? '<span class="res-nota">' + esc(s.nota) + '</span>' : '') + '</li>';
+    }).join("") + '</ul>';
+  }
+
   function render() {
+    renderResumen();
     var out = "";
     CATS.forEach(function (c) {
       if (filter !== "all" && filter !== c) return;
@@ -622,7 +684,7 @@ footer a { color: var(--muted); }
           '<p>' + bi(p) + '</p>' +
           '<div class="card-foot"><div class="links">' + links + '</div>' +
           (p.links.length ? '<label class="tick"><input type="checkbox" id="done-' + p.id + '" data-done="' + p.id + '"' + (isDone ? ' checked' : '') + '>' + bi(T.done) + '</label>' : '') +
-          '</div></article>';
+          '</div>' + seguimientoHtml(p) + '</article>';
       });
       out += '</div></div>';
     });
@@ -650,7 +712,9 @@ footer a { color: var(--muted); }
     lang = l; html.setAttribute("data-lang", l); html.setAttribute("lang", l);
     document.querySelectorAll("[data-set-lang]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-set-lang") === l)); });
     try { localStorage.setItem("rr-lang", l); } catch (e) {}
+    if (listo) render();   // keuzelijsten hebben teksten per taal
   }
+  var listo = false;
   function setFilter(f) {
     filter = f;
     document.querySelectorAll("[data-filter]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-filter") === f)); });
@@ -674,14 +738,19 @@ footer a { color: var(--muted); }
   function selectText(el) { var r = document.createRange(); r.selectNodeContents(el); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); }
 
   document.addEventListener("change", function (e) {
-    var id = e.target.getAttribute && e.target.getAttribute("data-done");
-    if (!id) return;
-    guardar(id, { hecho: e.target.checked });
+    if (!e.target.getAttribute) return;
+    var id = e.target.getAttribute("data-done");
+    if (id) { guardar(id, { hecho: e.target.checked }); return; }
+    var fid = e.target.getAttribute("data-fase");
+    if (fid) { guardar(fid, { fase: e.target.value }); return; }
+    var nid = e.target.getAttribute("data-nota");
+    if (nid && e.target.value !== (st(nid).nota || "")) guardar(nid, { nota: e.target.value.slice(0, 500) });
   });
 
   document.getElementById("words").innerHTML = WORDS.map(function (w) { return '<button type="button" class="word" data-word="' + esc(w) + '">' + esc(w) + '</button>'; }).join("");
   setLang(lang === "nl" ? "nl" : "es");
   setFilter(filter === "all" || CATS.indexOf(filter) > -1 ? filter : "all");
+  listo = true;
   conectarDb();
 })();
 </script>
