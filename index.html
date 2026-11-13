@@ -1,0 +1,657 @@
+<!doctype html>
+<html lang="es" data-lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#b5450f">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Remoto ES">
+<title>Trabajo remoto en español</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: één smalle leeskolom; bovenaan de kern, dan een stappenroute, dan de filterbare kaarten met platformen */
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --ink: #16243a;
+  --muted: #56637a;
+  --line: #dde2ea;
+  --accent: #b5450f;      /* pimentón */
+  --accent-soft: #fbe9df;
+  --ok: #1d7a46; --ok-soft: #e1f3e8;
+  --check: #8a5b00; --check-soft: #fbf0d6;
+  --no: #a12a2a; --no-soft: #f8e1e1;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f1622; --surface: #172131; --ink: #e8edf5; --muted: #9eabc0; --line: #2a374b;
+  --accent: #f08a52; --accent-soft: #3a2418;
+  --ok: #6fd39a; --ok-soft: #173326; --check: #f0c46a; --check-soft: #3a2f14; --no: #f29191; --no-soft: #3d1c1c;
+  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f1622; --surface: #172131; --ink: #e8edf5; --muted: #9eabc0; --line: #2a374b;
+  --accent: #f08a52; --accent-soft: #3a2418;
+  --ok: #6fd39a; --ok-soft: #173326; --check: #f0c46a; --check-soft: #3a2f14; --no: #f29191; --no-soft: #3d1c1c;
+  color-scheme: dark }
+
+* { box-sizing: border-box; }
+body { margin: 0; padding-block: env(safe-area-inset-top, 0px) env(safe-area-inset-bottom, 0px); background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 17px; line-height: 1.55; }
+.wrap { max-width: 920px; margin: 0 auto; padding-block: 28px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 44px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(2rem, 5vw, 2.9rem); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 1.5rem; font-weight: 700; }
+h3 { font-size: 1.12rem; font-weight: 700; }
+p { margin: 0; max-width: 65ch; }
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.muted { color: var(--muted); }
+section { display: grid; gap: 16px; }
+
+/* taal */
+html[data-lang="es"] [lang="nl"], html[data-lang="nl"] [lang="es"] { display: none !important; }
+
+header { display: grid; gap: 14px; }
+.top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.eyebrow { font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+.lang { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--surface); }
+.lang button { border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 0.9rem; font-weight: 700; padding: 6px 14px; border-radius: 999px; cursor: pointer; }
+.lang button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.lead { font-size: 1.12rem; color: var(--muted); }
+
+/* kern */
+.keys { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.key { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; display: grid; gap: 8px; align-content: start; }
+.key strong { font-family: var(--font-display); font-size: 1.05rem; }
+.key.warn { background: var(--accent-soft); border-color: transparent; }
+@media (max-width: 760px) { .keys { grid-template-columns: 1fr; } }
+
+/* route */
+.route { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; counter-reset: stap; }
+.route li { counter-increment: stap; display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 14px; padding-block: 14px; border-top: 1px solid var(--line); }
+.route li:last-child { border-bottom: 1px solid var(--line); }
+.route li::before { content: counter(stap); font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; border: 2px solid var(--accent); color: var(--accent); }
+.route .txt { display: grid; gap: 4px; }
+
+/* filters */
+.bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: inherit; font-size: 0.95rem; padding: 7px 14px; border-radius: 999px; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.progress { font-size: 0.95rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 0.92rem; color: var(--muted); }
+
+.group { display: grid; gap: 12px; }
+.group h3 { font-size: 1.05rem; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; font-family: var(--font-body); }
+.quitar { border: 1px solid var(--line); background: transparent; color: var(--muted); font: inherit; font-size: 0.85rem; padding: 4px 10px; border-radius: 999px; cursor: pointer; }
+.quitar:hover { border-color: var(--no); color: var(--no); background: var(--no-soft); }
+.sync { font-size: 0.88rem; color: var(--muted); }
+.sync[data-s="ok"] { color: var(--ok); }
+.sync[data-s="error"], .sync[data-s="lento"] { color: var(--no); }
+.papelera { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
+.papelera summary { cursor: pointer; font-weight: 700; }
+.papelera[open] { display: grid; gap: 10px; }
+.papelera ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.papelera li { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding-block: 6px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+.volver { border: 1px solid var(--accent); color: var(--accent); background: transparent; font: inherit; font-size: 0.88rem; padding: 4px 12px; border-radius: 999px; cursor: pointer; }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 10px 12px 10px 16px; border-radius: 10px; display: flex; gap: 14px; align-items: center; max-width: calc(100% - 32px); z-index: 20; box-shadow: 0 6px 24px rgba(0,0,0,.25); }
+.toast[hidden] { display: none; }
+.toast button { background: transparent; color: var(--bg); border: 1px solid currentColor; font: inherit; font-weight: 700; padding: 5px 12px; border-radius: 8px; cursor: pointer; white-space: nowrap; }
+.note { font-size: 0.95rem; background: var(--check-soft); border-radius: var(--radius); padding: 12px 14px; }
+.cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 680px) { .cards { grid-template-columns: 1fr; } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.card.done { opacity: 0.72; }
+.card-head { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.card-head h4 { margin: 0; font-family: var(--font-display); font-size: 1.15rem; }
+.badges { display: flex; flex-wrap: wrap; gap: 6px; }
+.badge { font-size: 0.8rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+.b-ok { background: var(--ok-soft); color: var(--ok); }
+.b-check { background: var(--check-soft); color: var(--check); }
+.b-no { background: var(--no-soft); color: var(--no); }
+.b-tag { background: transparent; color: var(--muted); border: 1px solid var(--line); font-weight: 400; }
+.card p { font-size: 0.98rem; }
+.card-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.links { display: flex; flex-wrap: wrap; gap: 8px; }
+.go { display: inline-block; background: var(--accent); color: #fff; text-decoration: none; font-weight: 700; font-size: 0.95rem; padding: 8px 14px; border-radius: 8px; }
+:root[data-theme="dark"] .go { color: #1a0d05; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .go { color: #1a0d05; } }
+.go.alt { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+.tick { display: inline-flex; align-items: center; gap: 6px; font-size: 0.92rem; color: var(--muted); cursor: pointer; }
+.tick input { width: 18px; height: 18px; accent-color: var(--ok); }
+
+/* zoekwoorden */
+.words { display: flex; flex-wrap: wrap; gap: 8px; }
+.word { font: inherit; font-size: 0.95rem; background: var(--surface); color: var(--ink); border: 1px dashed var(--muted); border-radius: 8px; padding: 6px 12px; cursor: pointer; }
+.word.copied { border-style: solid; border-color: var(--ok); color: var(--ok); }
+
+/* lijsten */
+.two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 760px) { .two { grid-template-columns: 1fr; } }
+.box { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; display: grid; gap: 10px; align-content: start; }
+.box.alarm { border-color: var(--no); }
+.box ul { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+.num { font-variant-numeric: tabular-nums; font-weight: 700; }
+
+footer { font-size: 0.88rem; color: var(--muted); display: grid; gap: 8px; border-top: 1px solid var(--line); padding-top: 18px; }
+footer ul { margin: 0; padding-left: 1.2em; display: grid; gap: 2px; }
+footer a { color: var(--muted); }
+@media (prefers-reduced-motion: no-preference) { .chip, .go, .word { transition: background .15s, color .15s; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="top">
+    <span class="eyebrow"><span lang="es">Mapa de oportunidades · Bélgica</span><span lang="nl">Kaart van mogelijkheden · België</span></span>
+    <div class="lang" role="group" aria-label="Idioma / Taal">
+      <button type="button" id="btn-es" data-set-lang="es" aria-pressed="true">Español</button>
+      <button type="button" id="btn-nl" data-set-lang="nl" aria-pressed="false">Nederlands</button>
+    </div>
+  </div>
+  <h1><span lang="es">Trabajo remoto en español, desde casa en Bélgica</span><span lang="nl">Remote werk in het Spaans, thuis vanuit België</span></h1>
+  <p class="lead"><span lang="es">Todas las plataformas en un solo sitio, con una etiqueta que te dice si de verdad puedes trabajar ahí viviendo en Bélgica. Marca las que ya probaste.</span><span lang="nl">Alle platformen op één plek, met een label dat zegt of het echt kan terwijl je in België woont. Vink aan wat je al geprobeerd hebt.</span></p>
+</header>
+
+<section aria-labelledby="h-keys">
+  <h2 id="h-keys"><span lang="es">Lo esencial</span><span lang="nl">De kern</span></h2>
+  <div class="keys">
+    <div class="key">
+      <strong><span lang="es">España y Latinoamérica: sí, como autónoma</span><span lang="nl">Spanje en Latijns-Amerika: ja, als zelfstandige</span></strong>
+      <p><span lang="es">Un contrato de empleada en España casi siempre exige vivir allí. Pero muchas empresas de España y Latinoamérica aceptan <b>contractors</b>: trabajas desde casa y les mandas una factura cada mes. Busca <b>worldwide</b>, <b>contractor</b> o <b>cualquier país</b>.</span><span lang="nl">Een werknemerscontract in Spanje vraagt bijna altijd dat je er woont. Maar veel bedrijven in Spanje en Latijns-Amerika werken met <b>contractors</b>: je werkt thuis en stuurt hen elke maand een factuur. Zoek op <b>worldwide</b>, <b>contractor</b> of <b>cualquier país</b>.</span></p>
+    </div>
+    <div class="key">
+      <strong><span lang="es">Con solo español, lo más rápido es freelance</span><span lang="nl">Met alleen Spaans gaat freelance het snelst</span></strong>
+      <p><span lang="es">Clases de español online, tareas para inteligencia artificial, transcripción y asistente virtual para clientes hispanos. Para cobrar en Bélgica necesitas el estatuto de autónoma (ver abajo).</span><span lang="nl">Online Spaanse les, taken voor AI-bedrijven, transcriptie en virtueel assistent voor Spaanstalige klanten. Om in België te factureren is het statuut van zelfstandige nodig (zie onderaan).</span></p>
+    </div>
+    <div class="key warn">
+      <strong><span lang="es">Nunca pagues por un trabajo</span><span lang="nl">Betaal nooit voor een job</span></strong>
+      <p><span lang="es">Ni por formación, ni por equipo, ni por un "depósito". Una empresa seria te paga a ti, no al revés.</span><span lang="nl">Niet voor opleiding, materiaal of een "waarborg". Een echte werkgever betaalt jou, niet omgekeerd.</span></p>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="h-route">
+  <h2 id="h-route"><span lang="es">Ruta recomendada</span><span lang="nl">Aanbevolen volgorde</span></h2>
+  <ol class="route">
+    <li><div class="txt"><h3><span lang="es">Activa alertas de empleo</span><span lang="nl">Zet vacature-alerts aan</span></h3>
+      <p class="muted"><span lang="es">En LinkedIn e Indeed, con las búsquedas ya preparadas de abajo. Así las ofertas llegan solas a tu correo.</span><span lang="nl">Op LinkedIn en Indeed, met de klaargezette zoekopdrachten hieronder. Dan komen nieuwe vacatures vanzelf in je mailbox.</span></p></div></li>
+    <li><div class="txt"><h3><span lang="es">Pide consejo sobre el estatuto de autónoma</span><span lang="nl">Vraag advies over het statuut van zelfstandige</span></h3>
+      <p class="muted"><span lang="es">Una caja de seguro social (sociaal verzekeringsfonds) te lo explica gratis antes de empezar. Así cobras de forma legal.</span><span lang="nl">Een sociaal verzekeringsfonds legt het gratis uit voor je start. Zo is alles wat je verdient in orde.</span></p></div></li>
+    <li><div class="txt"><h3><span lang="es">Empieza con una o dos plataformas flexibles</span><span lang="nl">Begin met één of twee flexibele platformen</span></h3>
+      <p class="muted"><span lang="es">Por ejemplo Preply (clases) y Workana (asistente virtual). Ganas experiencia y referencias que después ayudan para un contrato fijo.</span><span lang="nl">Bijvoorbeeld Preply (les) en Workana (virtueel assistent). Zo bouw je ervaring en referenties op, die later helpen voor een vast contract.</span></p></div></li>
+    <li><div class="txt"><h3><span lang="es">Busca un cliente fijo en España o Latinoamérica</span><span lang="nl">Zoek een vaste klant in Spanje of Latijns-Amerika</span></h3>
+      <p class="muted"><span lang="es">Con experiencia, postula a puestos de soporte como contractor (Get on Board, We Remoto, Torre). Una empresa que te paga cada mes da más estabilidad que tareas sueltas.</span><span lang="nl">Met wat ervaring solliciteer je als contractor voor supportjobs (Get on Board, We Remoto, Torre). Eén bedrijf dat elke maand betaalt geeft meer zekerheid dan losse taken.</span></p></div></li>
+  </ol>
+</section>
+
+<section aria-labelledby="h-plat">
+  <h2 id="h-plat"><span lang="es">Plataformas y empresas</span><span lang="nl">Platformen en bedrijven</span></h2>
+  <div class="legend">
+    <span><span class="badge b-ok"><span lang="es">Posible desde Bélgica</span><span lang="nl">Kan vanuit België</span></span></span>
+    <span><span class="badge b-check"><span lang="es">Mira el país en cada oferta</span><span lang="nl">Land per vacature nakijken</span></span></span>
+    <span><span class="badge b-no"><span lang="es">Solo viviendo en otro país</span><span lang="nl">Alleen als je elders woont</span></span></span>
+  </div>
+  <div class="bar">
+    <div class="chips" role="group" aria-label="Filtro">
+      <button type="button" class="chip" id="f-all" data-filter="all" aria-pressed="true"><span lang="es">Todo</span><span lang="nl">Alles</span></button>
+      <button type="button" class="chip" id="f-buscar" data-filter="buscar" aria-pressed="false"><span lang="es">Buscadores</span><span lang="nl">Zoeksites</span></button>
+      <button type="button" class="chip" id="f-latam" data-filter="latam" aria-pressed="false"><span lang="es">España y Latinoamérica</span><span lang="nl">Spanje en Latijns-Amerika</span></button>
+      <button type="button" class="chip" id="f-empresa" data-filter="empresa" aria-pressed="false"><span lang="es">Empresas con contrato</span><span lang="nl">Bedrijven met contract</span></button>
+      <button type="button" class="chip" id="f-tareas" data-filter="tareas" aria-pressed="false"><span lang="es">Freelance y tareas</span><span lang="nl">Freelance en taken</span></button>
+      <button type="button" class="chip" id="f-clases" data-filter="clases" aria-pressed="false"><span lang="es">Clases de español</span><span lang="nl">Spaanse les</span></button>
+    </div>
+    <span class="progress" id="progress" aria-live="polite"></span>
+  </div>
+  <p class="sync" id="sync" data-s="local"></p>
+  <div id="groups" class="group-list" style="display:grid; gap:28px"></div>
+  <details class="papelera" id="papelera" hidden>
+    <summary><span lang="es">Quitadas</span><span lang="nl">Weggehaald</span> (<span id="pap-count">0</span>)</summary>
+    <p class="muted"><span lang="es">Estas no te sirvieron. Si cambias de idea, vuelve a ponerlas en la lista.</span><span lang="nl">Deze waren niet nuttig. Van gedachten veranderd? Zet ze terug in de lijst.</span></p>
+    <ul id="pap-list"></ul>
+  </details>
+</section>
+
+<section aria-labelledby="h-words">
+  <h2 id="h-words"><span lang="es">Palabras para buscar</span><span lang="nl">Zoekwoorden</span></h2>
+  <p class="muted"><span lang="es">Toca una palabra para copiarla y pégala en cualquier buscador. Muchas ofertas están en inglés aunque el trabajo sea en español.</span><span lang="nl">Tik op een woord om het te kopiëren en plak het in een zoeksite. Veel vacatures staan in het Engels, ook als het werk in het Spaans is.</span></p>
+  <div class="words" id="words"></div>
+</section>
+
+<section aria-labelledby="h-be">
+  <h2 id="h-be"><span lang="es">Trabajar desde Bélgica: lo práctico</span><span lang="nl">Werken vanuit België: het praktische</span></h2>
+  <div class="two">
+    <div class="box">
+      <h3><span lang="es">Autónoma (zelfstandige)</span><span lang="nl">Zelfstandige</span></h3>
+      <ul>
+        <li><span lang="es"><b>Complementaria (bijberoep)</b>: solo si además trabajas como empleada al menos a media jornada.</span><span lang="nl"><b>Bijberoep</b>: alleen als je daarnaast minstens halftijds werknemer bent.</span></li>
+        <li><span lang="es"><b>Principal (hoofdberoep)</b>: si no tienes otro trabajo. Las cuotas sociales son más altas.</span><span lang="nl"><b>Hoofdberoep</b>: als je geen ander werk hebt. De sociale bijdragen zijn hoger.</span></li>
+        <li><span lang="es">Número de empresa (KBO): unos <span class="num">€ 111,50</span>.</span><span lang="nl">Ondernemingsnummer (KBO): ongeveer <span class="num">€ 111,50</span>.</span></li>
+        <li><span lang="es">En complementaria no pagas cuotas sociales si ganas menos de <span class="num">€ 1.922,16</span> al año; por encima, mínimo <span class="num">€ 98,51</span> por trimestre (2026).</span><span lang="nl">In bijberoep geen sociale bijdragen onder <span class="num">€ 1.922,16</span> per jaar; daarboven minstens <span class="num">€ 98,51</span> per kwartaal (2026).</span></li>
+      </ul>
+      <div class="links">
+        <a class="go alt" href="https://www.vlaio.be/nl/begeleiding-advies/start/ondernemen-bijberoep/welke-stappen-moet-je-ondernemen-om-te-starten-als-zelfstandige-bijberoep" target="_blank" rel="noopener">VLAIO: stappen</a>
+        <a class="go alt" href="https://www.partena-professional.be/nl/starten-als-zelfstandige" target="_blank" rel="noopener">Partena: starten</a>
+      </div>
+      <p class="muted" style="font-size:.9rem"><span lang="es">Cifras de páginas de Partena y Accountable (2026). Confírmalas con tu caja de seguro social.</span><span lang="nl">Bedragen van Partena en Accountable (2026). Laat ze bevestigen door je sociaal verzekeringsfonds.</span></p>
+    </div>
+    <div class="box">
+      <h3><span lang="es">Contrato con una empresa extranjera</span><span lang="nl">Contract bij een buitenlands bedrijf</span></h3>
+      <ul>
+        <li><span lang="es">Si vives y trabajas en Bélgica, pagas impuestos y seguridad social en Bélgica, aunque la empresa sea de España.</span><span lang="nl">Woon en werk je in België, dan betaal je belasting en sociale zekerheid in België, ook als het bedrijf Spaans is.</span></li>
+        <li><span lang="es">Por eso muchas empresas españolas dicen "solo residentes en España": para ellas es más trabajo contratarte.</span><span lang="nl">Daarom schrijven veel Spaanse bedrijven "enkel inwoners van Spanje": jou aannemen is voor hen extra papierwerk.</span></li>
+        <li><span lang="es"><b>Como autónoma sí funciona:</b> trabajas para la empresa española o latinoamericana como contractor y le mandas una factura. Así ellos no tienen trámites en Bélgica.</span><span lang="nl"><b>Als zelfstandige kan het wel:</b> je werkt als contractor voor het Spaanse of Latijns-Amerikaanse bedrijf en stuurt een factuur. Dan hebben zij geen papierwerk in België.</span></li>
+        <li><span lang="es">Pregunta siempre en la entrevista: <i>"¿Podéis contratar a alguien que vive en Bélgica?"</i></span><span lang="nl">Vraag het altijd in het gesprek: <i>"Kunnen jullie iemand aannemen die in België woont?"</i></span></li>
+      </ul>
+    </div>
+    <div class="box alarm">
+      <h3><span lang="es">Señales de estafa</span><span lang="nl">Signalen van oplichting</span></h3>
+      <ul>
+        <li><span lang="es">Te piden dinero para formación, equipo o un depósito.</span><span lang="nl">Ze vragen geld voor opleiding, materiaal of een waarborg.</span></li>
+        <li><span lang="es">Solo hablan por WhatsApp o Telegram, sin web ni nombre de empresa.</span><span lang="nl">Contact enkel via WhatsApp of Telegram, zonder website of bedrijfsnaam.</span></li>
+        <li><span lang="es">"Trabajos de tareas" en los que primero tienes que recargar saldo.</span><span lang="nl">"Taakjobs" waarbij je eerst saldo moet opladen.</span></li>
+        <li><span lang="es">Te mandan un cheque o dinero y te piden devolver una parte.</span><span lang="nl">Ze sturen geld of een cheque en vragen een deel terug te storten.</span></li>
+        <li><span lang="es">Un sueldo muy alto por un trabajo muy fácil.</span><span lang="nl">Een heel hoog loon voor heel makkelijk werk.</span></li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3><span lang="es">Lo que más puertas abre</span><span lang="nl">Wat de meeste deuren opent</span></h3>
+      <p><span lang="es">Casi todos los empleos de atención al cliente en Bélgica piden español <b>más</b> otro idioma. Un poco de inglés o neerlandés ya multiplica las ofertas. En Flandes hay cursos de neerlandés baratos para adultos (pregunta en el Huis van het Nederlands o en la VDAB).</span><span lang="nl">Bijna alle klantendienstjobs in België vragen Spaans <b>plus</b> een andere taal. Een beetje Engels of Nederlands vergroot het aanbod sterk. In Vlaanderen zijn er goedkope cursussen Nederlands voor volwassenen (vraag bij het Huis van het Nederlands of de VDAB).</span></p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p><span lang="es">Investigado el 13 de noviembre de 2026. Las ofertas cambian cada semana: abre siempre la oferta original y comprueba país, sueldo y tipo de contrato.</span><span lang="nl">Opgezocht op 13 november 2026. Vacatures veranderen elke week: open altijd de originele vacature en controleer land, loon en type contract.</span></p>
+  <p><span lang="es">Fuentes consultadas:</span><span lang="nl">Geraadpleegde bronnen:</span></p>
+  <ul>
+    <li><a href="https://remotive.com/remote/jobs/customer-service/spanish-customer-support-4549656" target="_blank" rel="noopener">Remotive – Spanish Customer Support (Cross Border Talents)</a></li>
+    <li><a href="https://www.workingnomads.com/remote-spanish-jobs-europe" target="_blank" rel="noopener">Working Nomads – Remote Spanish jobs Europe</a></li>
+    <li><a href="https://job-boards.greenhouse.io/outlier/jobs/4550159005" target="_blank" rel="noopener">Outlier – Spanish writing expert</a></li>
+    <li><a href="https://www.europelanguagejobs.com/jobs/remote-online-data-analyst-spanish-speakers-in-spain-195892" target="_blank" rel="noopener">Europe Language Jobs – TELUS Digital, Spanish speakers in Spain</a></li>
+    <li><a href="https://gotranscript.com/spanish-transcription-job" target="_blank" rel="noopener">GoTranscript – Spanish transcription job</a></li>
+    <li><a href="https://jobs-teleperformance.career.softgarden.de/jobs/57082038/Customer-Service-Representative-Spanish---Support-Team-m-f-d---Home-Office" target="_blank" rel="noopener">TP Germany – Spanish, home office</a></li>
+    <li><a href="https://www.michaelpage.be/job-detail/customer-service-fashion-spanishitalian/ref/jn-092026-7097134" target="_blank" rel="noopener">Michael Page – Customer Service Spanish/Italian (Brussel)</a></li>
+    <li><a href="https://www.getonbrd.com/jobs/agente-de-soporte-al-cliente-interviews-chat-remote" target="_blank" rel="noopener">Get on Board – soporte «desde cualquier lugar del mundo»</a></li>
+    <li><a href="https://www.getonbrd.com/jobs/onboarding-analyst-fitco-remote" target="_blank" rel="noopener">Get on Board – Fitco, contractor internacional</a></li>
+    <li><a href="https://torre.ai/post/lWglJDAw-burn20-especialista-en-retencin-y-resolucin-de-clientes" target="_blank" rel="noopener">Torre – ejemplo de zona horaria de las Américas</a></li>
+    <li><a href="https://alignlist.com/jobs/micro1-spanish-language-expert-abe5efae-c389-4b27-81e7-d1daa927d7a3" target="_blank" rel="noopener">micro1 – Spanish Language Expert (Worldwide)</a></li>
+    <li><a href="https://www.legalitas.com/actualidad/autonomo-contractor" target="_blank" rel="noopener">Legálitas – qué es un autónomo contractor</a></li>
+    <li><a href="https://www.accountable.eu/nl-be/blog/zelfstandige-bijberoep/" target="_blank" rel="noopener">Accountable – zelfstandige in bijberoep</a></li>
+    <li><a href="https://www.bobex.be/nl-be/sociaal-secretariaat/sociaal-verzekeringsfonds/zelfstandige-in-bijberoep/" target="_blank" rel="noopener">Bobex – zelfstandige in bijberoep</a></li>
+    <li><a href="https://mills-reeve.com/publications/working-in-belgium-issues-for-uk-employers-to-cons" target="_blank" rel="noopener">Mills &amp; Reeve – Working in Belgium (sociale zekerheid)</a></li>
+    <li><a href="https://trabajarporelmundo.org/ensenar-espanol-online/" target="_blank" rel="noopener">Trabajar por el mundo – Enseñar español online</a></li>
+  </ul>
+</footer>
+</div>
+
+<div class="toast" id="toast" role="status" hidden>
+  <span><b class="t-name"></b> <span lang="es">quitada de la lista</span><span lang="nl">uit de lijst gehaald</span></span>
+  <button type="button" id="deshacer"><span lang="es">Deshacer</span><span lang="nl">Ongedaan maken</span></button>
+</div>
+
+<script>
+(function () {
+  var T = {
+    fit: {
+      ok:    { es: "Posible desde Bélgica", nl: "Kan vanuit België" },
+      check: { es: "Mira el país en cada oferta", nl: "Land per vacature nakijken" },
+      no:    { es: "Solo viviendo en otro país", nl: "Alleen als je elders woont" }
+    },
+    tag: {
+      en:   { es: "Suele pedir inglés", nl: "Vraagt vaak Engels" },
+      auto: { es: "Necesitas estatuto de autónoma", nl: "Statuut zelfstandige nodig" },
+      contrato: { es: "Contrato de empleada", nl: "Contract als werknemer" }
+    },
+    cat: {
+      buscar:  { es: "Buscadores con la búsqueda ya preparada", nl: "Zoeksites met klaargezette zoekopdracht" },
+      latam:   { es: "Empresas de España y Latinoamérica (como contractor)", nl: "Bedrijven in Spanje en Latijns-Amerika (als contractor)" },
+      empresa: { es: "Empresas de atención al cliente", nl: "Klantendienstbedrijven" },
+      tareas:  { es: "Freelance y tareas online", nl: "Freelance en online taken" },
+      clases:  { es: "Dar clases de español online", nl: "Online Spaanse les geven" }
+    },
+    note: {
+      latam: { es: "Horario: las 9:00–18:00 en Colombia o México son las 15:00–01:00 en Bélgica (en invierno). Muchas empresas latinoamericanas piden trabajar en su horario, así que es trabajo de tarde y noche. Los sueldos suelen ser más bajos que en Europa: en Torre vimos 600–1.200 US$ al mes.",
+               nl: "Uurrooster: 9:00–18:00 in Colombia of Mexico is 15:00–01:00 in België (in de winter). Veel Latijns-Amerikaanse bedrijven willen dat je in hun uren werkt, dus het is namiddag- en avondwerk. De lonen liggen meestal lager dan in Europa: op Torre zagen we 600–1.200 US$ per maand." }
+    },
+    open: { es: "Abrir", nl: "Openen" },
+    done: { es: "Ya me registré", nl: "Al ingeschreven" },
+    quitar: { es: "✕ No me sirve", nl: "✕ Niet nuttig" },
+    quitarTip: { es: "Quitar de la lista (se puede recuperar abajo)", nl: "Uit de lijst halen (onderaan terug te zetten)" },
+    volver: { es: "Volver a la lista", nl: "Terugzetten" },
+    vacio: { es: "No queda nada en esta categoría. Las que quitaste están abajo, en «Quitadas».", nl: "Niets meer over in deze categorie. Wat je weghaalde staat onderaan bij «Weggehaald»." },
+    prog: { es: "probadas", nl: "geprobeerd" },
+    of:   { es: "de", nl: "van" }
+  };
+
+  var P = [
+    // buscadores
+    { id: "linkedin", cat: "buscar", name: "LinkedIn Empleos", fit: "ok", tags: [],
+      es: "La búsqueda ya está hecha: ofertas remotas con «español» en Bélgica y en toda la UE. Crea una alerta para recibirlas por correo.",
+      nl: "Zoekopdracht staat klaar: remote vacatures met «Spaans» in België en in de hele EU. Maak een alert om ze per mail te krijgen.",
+      links: [
+        { es: "Bélgica", nl: "België", url: "https://www.linkedin.com/jobs/search/?keywords=spanish%20OR%20espa%C3%B1ol&location=Belgium&geoId=100565514&f_WT=2" },
+        { es: "Toda la UE", nl: "Hele EU", url: "https://www.linkedin.com/jobs/search/?keywords=spanish%20speaking%20customer&location=European%20Union&geoId=91000000&f_WT=2" }
+      ] },
+    { id: "indeed-be", cat: "buscar", name: "Indeed Bélgica", fit: "ok", tags: [],
+      es: "El buscador más grande de Bélgica. Enlace con «Spaans / Spanish / español» y filtro de teletrabajo.",
+      nl: "De grootste zoeksite van België. Link met «Spaans / Spanish / español» en filter op thuiswerk.",
+      links: [ { url: "https://be.indeed.com/jobs?q=spaans+OR+spanish+OR+espa%C3%B1ol&sc=0kf%3Aattr%28DSQF7%29%3B" } ] },
+    { id: "vdab", cat: "buscar", name: "VDAB", fit: "ok", tags: [],
+      es: "El servicio público de empleo de Flandes. Ofertas belgas con español; a veces con días de teletrabajo.",
+      nl: "De Vlaamse dienst voor arbeidsbemiddeling. Belgische vacatures met Spaans, soms met thuiswerkdagen.",
+      links: [ { url: "https://www.vdab.be/vindeenjob/vacatures?trefwoord=spaans" } ] },
+    { id: "jooble", cat: "buscar", name: "Jooble Bélgica", fit: "ok", tags: [],
+      es: "Junta ofertas de muchas webs belgas con «Spaans» en un solo listado.",
+      nl: "Verzamelt vacatures met «Spaans» van veel Belgische sites in één lijst.",
+      links: [ { url: "https://be.jooble.org/vacatures-spaans" } ] },
+    { id: "elj", cat: "buscar", name: "Europe Language Jobs", fit: "check", tags: [],
+      es: "Web especializada en empleos por idioma en toda Europa. Muchas ofertas son con mudanza; filtra por remoto.",
+      nl: "Site voor taaljobs in heel Europa. Veel vacatures vragen verhuizen; filter op remote.",
+      links: [ { url: "https://www.europelanguagejobs.com/jobs-for-Spanish-speakers" } ] },
+    { id: "wn", cat: "buscar", name: "Working Nomads", fit: "check", tags: ["en"],
+      es: "Lista de empleos remotos en español para Europa. Revisa en cada oferta qué países acepta.",
+      nl: "Lijst van remote Spaanstalige jobs voor Europa. Kijk per vacature welke landen toegelaten zijn.",
+      links: [ { url: "https://www.workingnomads.com/remote-spanish-jobs-europe" } ] },
+    { id: "remotive", cat: "buscar", name: "Remotive", fit: "check", tags: ["en"],
+      es: "Empleos 100% remotos de atención al cliente. Aquí salió una oferta en español que incluía Bélgica.",
+      nl: "100% remote klantendienstjobs. Hier stond een Spaanstalige vacature die België vermeldde.",
+      links: [ { url: "https://remotive.com/remote-jobs/customer-service" } ] },
+    { id: "indeed-es", cat: "buscar", name: "Indeed España", fit: "no", tags: [],
+      es: "Muchísimo teletrabajo en atención al cliente, pero casi siempre para quien vive en España. Útil para ver qué empresas contratan.",
+      nl: "Heel veel thuiswerk in klantendienst, maar bijna altijd voor wie in Spanje woont. Handig om te zien welke bedrijven aannemen.",
+      links: [ { url: "https://es.indeed.com/Ofertas-de-Teletrabajo-atenci%C3%B3n-al-cliente-en-Remote" } ] },
+
+    // españa y latinoamérica
+    { id: "getonbrd", cat: "latam", name: "Get on Board", fit: "check", tags: ["auto"],
+      es: "La bolsa de empleo remoto más conocida de Latinoamérica, con categoría de atención al cliente. Algunas ofertas son «desde cualquier lugar del mundo»; otras solo para Latinoamérica.",
+      nl: "De bekendste remote jobsite van Latijns-Amerika, met een categorie klantendienst. Sommige vacatures zijn «vanuit eender waar ter wereld», andere enkel voor Latijns-Amerika.",
+      links: [ { url: "https://www.getonbrd.com/empleos/servicio-cliente" } ] },
+    { id: "weremoto", cat: "latam", name: "We Remoto", fit: "check", tags: ["auto"],
+      es: "Empleos remotos en español, con una sección de atención al cliente. Muchas ofertas son para contractors.",
+      nl: "Remote jobs in het Spaans, met een rubriek klantendienst. Veel vacatures zijn voor contractors.",
+      links: [ { url: "https://www.weremoto.com/categoria-de-trabajo/atencion-al-cliente" } ] },
+    { id: "torre", cat: "latam", name: "Torre", fit: "check", tags: ["auto"],
+      es: "Plataforma latinoamericana con muchas ofertas remotas de atención al cliente (sobre todo Colombia y México). Mira la zona horaria que piden.",
+      nl: "Latijns-Amerikaans platform met veel remote klantendienstjobs (vooral Colombia en Mexico). Kijk welke tijdzone ze vragen.",
+      links: [ { url: "https://torre.ai/sub/atencion-cliente-remoto-mexico/jobs" } ] },
+    { id: "vacantesremotas", cat: "latam", name: "Vacantes Remotas", fit: "check", tags: ["auto"],
+      es: "Lista de vacantes remotas en español. Fíjate en la fecha: algunas ofertas caducan rápido.",
+      nl: "Lijst met remote vacatures in het Spaans. Let op de datum: sommige vacatures vervallen snel.",
+      links: [ { url: "https://www.vacantesremotas.com" } ] },
+    { id: "remowork", cat: "latam", name: "Remowork", fit: "check", tags: ["auto"],
+      es: "Junta empleos remotos que piden español. Busca las que dicen «Remote (Global)».",
+      nl: "Verzamelt remote jobs waarvoor Spaans nodig is. Zoek de vacatures met «Remote (Global)».",
+      links: [ { url: "https://remowork.life/jobs/languages/spanish" } ] },
+    { id: "micro1", cat: "latam", name: "micro1", fit: "ok", tags: ["auto", "en"],
+      es: "Busca expertos en español para proyectos de inteligencia artificial, como contractor y desde cualquier país («Worldwide»).",
+      nl: "Zoekt Spaanstalige experts voor AI-projecten, als contractor en vanuit elk land («Worldwide»).",
+      links: [ { url: "https://www.micro1.ai" } ] },
+    { id: "sya", cat: "latam", name: "SupportYourApp", fit: "check", tags: ["auto", "en"],
+      es: "Empresa de soporte que contrata consultores en español en remoto (España y Latinoamérica). Suele pedir también inglés.",
+      nl: "Supportbedrijf dat remote Spaanstalige consultants aanneemt (Spanje en Latijns-Amerika). Vraagt meestal ook Engels.",
+      links: [ { url: "https://apply.workable.com/supportyourapp/" } ] },
+
+    // empresas
+    { id: "tp", cat: "empresa", name: "Teleperformance (TP)", fit: "check", tags: ["contrato"],
+      es: "La mayor empresa de atención al cliente. Tiene puestos en español desde casa, pero cada país contrata a sus propios residentes (Alemania, España…).",
+      nl: "Het grootste klantendienstbedrijf. Heeft Spaanstalige thuiswerkjobs, maar elk land neemt zijn eigen inwoners aan (Duitsland, Spanje…).",
+      links: [ { url: "https://www.teleperformance.com/en-us/careers/" } ] },
+    { id: "concentrix", cat: "empresa", name: "Concentrix", fit: "check", tags: ["contrato"],
+      es: "Tiene oficina en Bruselas. Busca en su web con «Spanish» y lugar «Belgium».",
+      nl: "Heeft een vestiging in Brussel. Zoek op hun site met «Spanish» en locatie «Belgium».",
+      links: [ { url: "https://jobs.concentrix.com/global/en" } ] },
+    { id: "foundever", cat: "empresa", name: "Foundever", fit: "check", tags: ["contrato"],
+      es: "Antes Sitel. Contrata en español, también en remoto, sobre todo para residentes en España.",
+      nl: "Vroeger Sitel. Neemt Spaanstaligen aan, ook remote, vooral voor inwoners van Spanje.",
+      links: [ { url: "https://foundever.com/careers/" } ] },
+    { id: "transcom", cat: "empresa", name: "Transcom", fit: "no", tags: ["contrato"],
+      es: "Ofrece puestos de 100% teletrabajo en español, pero para residentes en España.",
+      nl: "Heeft 100% thuiswerkjobs in het Spaans, maar voor inwoners van Spanje.",
+      links: [ { url: "https://apply.careers.transcom.com/en_US/careers" } ] },
+    { id: "cbt", cat: "empresa", name: "Cross Border Talents", fit: "check", tags: ["contrato", "en"],
+      es: "Agencia de selección para puestos en idiomas. Una oferta remota en español mencionaba Bélgica; la mayoría son en Grecia o Lisboa.",
+      nl: "Rekruteringsbureau voor taaljobs. Eén remote Spaanstalige vacature vermeldde België; de meeste zijn in Griekenland of Lissabon.",
+      links: [ { url: "https://apply.workable.com/crossbordertalents/" } ] },
+    { id: "reloc", cat: "empresa", name: "Ofertas «con relocation»", fit: "no", tags: ["contrato"],
+      es: "Muchas ofertas en español (Grecia, Bulgaria, Portugal) dicen «remoto» pero exigen mudarse a ese país. Solo si quisierais mudaros.",
+      nl: "Veel Spaanstalige vacatures (Griekenland, Bulgarije, Portugal) zeggen «remote» maar vragen om naar dat land te verhuizen. Enkel als jullie willen verhuizen.",
+      links: [] },
+
+    // tareas
+    { id: "workana", cat: "tareas", name: "Workana", fit: "ok", tags: ["auto"],
+      es: "La plataforma freelance más grande en español. Muchos proyectos de asistente virtual y atención al cliente por WhatsApp, correo y redes.",
+      nl: "Het grootste Spaanstalige freelanceplatform. Veel opdrachten als virtueel assistent en klantendienst via WhatsApp, mail en sociale media.",
+      links: [ { url: "https://www.workana.com/es" } ] },
+    { id: "malt", cat: "tareas", name: "Malt", fit: "ok", tags: ["auto"],
+      es: "Plataforma freelance europea, activa en España y Bélgica. Crea un perfil en español.",
+      nl: "Europees freelanceplatform, actief in Spanje en België. Maak een profiel in het Spaans.",
+      links: [ { url: "https://www.malt.es" } ] },
+    { id: "upwork", cat: "tareas", name: "Upwork", fit: "ok", tags: ["auto", "en"],
+      es: "El mayor mercado freelance del mundo. Hay clientes que buscan atención al cliente en español, pero la web está en inglés.",
+      nl: "De grootste freelancemarkt ter wereld. Er zijn klanten die Spaanstalige klantendienst zoeken, maar de site is in het Engels.",
+      links: [ { url: "https://www.upwork.com" } ] },
+    { id: "fiverr", cat: "tareas", name: "Fiverr", fit: "ok", tags: ["auto"],
+      es: "Ofreces un servicio con precio fijo (por ejemplo: «respondo a tus clientes en español»). Los clientes te encuentran a ti.",
+      nl: "Je biedt een dienst aan tegen een vaste prijs (bv. «ik beantwoord je klanten in het Spaans»). Klanten vinden jou.",
+      links: [ { url: "https://www.fiverr.com/es/" } ] },
+    { id: "gotranscript", cat: "tareas", name: "GoTranscript", fit: "ok", tags: ["auto"],
+      es: "Transcribir audio en español desde cualquier país. Hay una prueba corta para entrar. El pago por minuto de audio es bajo al principio.",
+      nl: "Spaanse audio uittypen vanuit elk land. Je doet eerst een korte test. De vergoeding per audiominuut is in het begin laag.",
+      links: [ { url: "https://gotranscript.com/spanish-transcription-job" } ] },
+    { id: "outlier", cat: "tareas", name: "Outlier", fit: "check", tags: ["auto", "en"],
+      es: "Escribir y evaluar textos en español para entrenar inteligencia artificial. Unos 7,50–8 US$ por hora según sus ofertas; los países aceptados cambian.",
+      nl: "Spaanse teksten schrijven en beoordelen om AI te trainen. Ongeveer 7,50–8 US$ per uur volgens hun vacatures; de toegelaten landen wisselen.",
+      links: [ { url: "https://outlier.ai" } ] },
+    { id: "prolific", cat: "tareas", name: "Prolific", fit: "check", tags: ["auto", "en"],
+      es: "Encuestas y estudios pagados, y tareas de IA para hispanohablantes con prueba de nivel (anuncian desde 30 US$/h para expertos).",
+      nl: "Betaalde enquêtes en studies, en AI-taken voor Spaanstaligen met een niveautest (vanaf 30 US$/uur voor experts volgens hun advertentie).",
+      links: [ { url: "https://www.prolific.com" } ] },
+    { id: "opentrain", cat: "tareas", name: "OpenTrain AI", fit: "check", tags: ["auto", "en"],
+      es: "Proyectos de evaluación en español a tiempo parcial, anunciados a 25–35 US$/h.",
+      nl: "Deeltijdse beoordelingsprojecten in het Spaans, aangekondigd aan 25–35 US$/uur.",
+      links: [ { url: "https://www.opentrain.ai" } ] },
+    { id: "telus", cat: "tareas", name: "TELUS Digital", fit: "no", tags: ["auto", "en"],
+      es: "Evaluadora de búsquedas en español, flexible. La oferta actual pide haber vivido en España y saber inglés.",
+      nl: "Spaanstalige zoekresultaten beoordelen, flexibel. De huidige vacature vraagt dat je in Spanje woonde en Engels kent.",
+      links: [ { url: "https://www.telusdigital.com/careers" } ] },
+
+    // clases
+    { id: "preply", cat: "clases", name: "Preply", fit: "ok", tags: ["auto"],
+      es: "Registro gratis; revisan tu perfil a mano. Necesitas ordenador con buena cámara y micrófono. Tú pones el precio.",
+      nl: "Gratis inschrijven; ze kijken je profiel manueel na. Je hebt een computer met goede camera en microfoon nodig. Je kiest zelf je prijs.",
+      links: [ { url: "https://preply.com/es/teach" } ] },
+    { id: "italki", cat: "clases", name: "italki", fit: "ok", tags: ["auto"],
+      es: "Una de las plataformas de idiomas más conocidas. Puedes ser «profesora comunitaria» sin título de profesora.",
+      nl: "Een van de bekendste taalplatformen. Je kan «community tutor» worden zonder lerarendiploma.",
+      links: [ { url: "https://teach.italki.com" } ] },
+    { id: "superprof", cat: "clases", name: "Superprof", fit: "ok", tags: ["auto"],
+      es: "Clases online o en persona cerca de casa. También existe en Bélgica para alumnos locales.",
+      nl: "Online les of les aan huis in de buurt. Bestaat ook in België voor leerlingen dichtbij.",
+      links: [ { es: "España", nl: "Spanje", url: "https://www.superprof.es" }, { es: "Bélgica", nl: "België", url: "https://www.superprof.be" } ] },
+    { id: "classgap", cat: "clases", name: "Classgap", fit: "ok", tags: ["auto"],
+      es: "Plataforma española de clases online con aula virtual propia. Perfiles verificados por su equipo.",
+      nl: "Spaans platform voor online les met een eigen virtueel klaslokaal. Profielen worden door hun team nagekeken.",
+      links: [ { url: "https://www.classgap.com" } ] }
+  ];
+
+  var WORDS = [
+    "Spanish speaking", "Spanish customer support", "remote Belgium", "remote EU", "anywhere in Europe",
+    "atención al cliente", "teletrabajo", "soporte chat", "backoffice español", "asistente virtual",
+    "Spaans thuiswerk", "Spaanstalig",
+    "remote worldwide", "contractor", "100% remoto", "desde cualquier país", "LATAM remote"
+  ];
+
+  var CATS = ["buscar", "latam", "empresa", "tareas", "clases"];
+  var html = document.documentElement;
+  var lang = "es", filter = "all", estado = {};
+  try { lang = localStorage.getItem("rr-lang") || "es"; } catch (e) {}
+  try { filter = localStorage.getItem("rr-filter") || "all"; } catch (e) {}
+  // estado per platform: { hecho: bool, oculto: bool }. Lokaal als reserve, gedeelde database als die er is.
+  try { estado = JSON.parse(localStorage.getItem("rr-estado") || "{}") || {}; } catch (e) { estado = {}; }
+  try { var oud = JSON.parse(localStorage.getItem("rr-done") || "{}") || {}; Object.keys(oud).forEach(function (k) { estado[k] = Object.assign({}, estado[k], { hecho: true }); }); } catch (e) {}
+  function st(id) { return estado[id] || {}; }
+  function oculto(id) { return !!st(id).oculto; }
+  function saveLocal() { try { localStorage.setItem("rr-estado", JSON.stringify(estado)); } catch (e) {} }
+
+  var db = null, colaEscritura = {};
+  function guardar(id, patch) {
+    var nuevo = Object.assign({}, st(id), patch);
+    estado[id] = nuevo; saveLocal(); render();
+    if (!db) return;
+    var prev = colaEscritura[id] || Promise.resolve();
+    colaEscritura[id] = prev.then(function () { return db.collection("estado").doc(id).set(nuevo); })
+      .catch(function () { setSync("error"); });
+  }
+  function setSync(s) {
+    var el = document.getElementById("sync"); if (!el) return;
+    el.setAttribute("data-s", s);
+    var txt = {
+      local: { es: "Guardado solo en este navegador", nl: "Enkel bewaard in deze browser" },
+      cargando: { es: "Cargando tu lista…", nl: "Je lijst wordt geladen…" },
+      ok: { es: "Guardado para todos los que usan esta página", nl: "Bewaard voor iedereen die deze pagina gebruikt" },
+      lento: { es: "No se puede conectar ahora; los cambios quizá no se guarden", nl: "Nu geen verbinding; wijzigingen worden misschien niet bewaard" },
+      error: { es: "No se pudo guardar. ¿Tienes permiso para editar esta página?", nl: "Bewaren lukte niet. Heb je bewerkrechten op deze pagina?" }
+    }[s];
+    el.innerHTML = bi(txt);
+  }
+  function conectarDb() {
+    var c = window.claude;
+    if (!c || typeof c.use !== "function") { setSync("local"); return; }
+    setSync("cargando");
+    c.use("db").then(function (d) {
+      if (!d) { setSync("local"); return; }
+      db = d;
+      var timer = setTimeout(function () { setSync("lento"); }, 10000);
+      var primera = true;
+      db.collection("estado").onSnapshot(function (snap) {
+        var remoto = {};
+        snap.docs.forEach(function (doc) { if (doc.exists) remoto[doc.id] = doc.data(); });
+        if (!snap.metadata.fromCache) {
+          clearTimeout(timer); setSync("ok");
+          if (primera) {
+            primera = false;
+            // Eerste keer: wat al lokaal aangevinkt was, mee naar de gedeelde lijst.
+            Object.keys(estado).forEach(function (k) { if (!remoto[k] && (estado[k].hecho || estado[k].oculto)) { remoto[k] = estado[k]; guardar(k, {}); } });
+          }
+        }
+        estado = Object.assign({}, remoto); saveLocal(); render();
+      }, function () { clearTimeout(timer); db = null; setSync("local"); });
+    }, function () { setSync("local"); });
+  }
+
+  var deshacerId = null, deshacerTimer = null;
+  function mostrarDeshacer(id) {
+    var p = P.filter(function (x) { return x.id === id; })[0]; if (!p) return;
+    deshacerId = id;
+    var t = document.getElementById("toast");
+    t.querySelector(".t-name").textContent = p.name;
+    t.hidden = false;
+    clearTimeout(deshacerTimer);
+    deshacerTimer = setTimeout(function () { t.hidden = true; deshacerId = null; }, 7000);
+  }
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function bi(o) { return '<span lang="es">' + esc(o.es) + '</span><span lang="nl">' + esc(o.nl) + '</span>'; }
+
+  function render() {
+    var out = "";
+    CATS.forEach(function (c) {
+      if (filter !== "all" && filter !== c) return;
+      var items = P.filter(function (p) { return p.cat === c && !oculto(p.id); });
+      if (!items.length) return;
+      out +='<div class="group"><h3>' + bi(T.cat[c]) + '</h3>' + (T.note[c] ? '<p class="note">' + bi(T.note[c]) + '</p>' : '') + '<div class="cards">';
+      items.forEach(function (p) {
+        var isDone = !!st(p.id).hecho;
+        var badges = '<span class="badge b-' + p.fit + '">' + bi(T.fit[p.fit]) + '</span>';
+        p.tags.forEach(function (t) { badges += '<span class="badge b-tag">' + bi(T.tag[t]) + '</span>'; });
+        var links = p.links.map(function (l, i) {
+          var label = l.es ? bi({ es: T.open.es + ": " + l.es, nl: T.open.nl + ": " + l.nl }) : bi(T.open);
+          return '<a class="go' + (i > 0 ? ' alt' : '') + '" href="' + esc(l.url) + '" target="_blank" rel="noopener">' + label + '</a>';
+        }).join("");
+        out += '<article class="card' + (isDone ? ' done' : '') + '">' +
+          '<div class="card-head"><h4>' + esc(p.name) + '</h4>' +
+          '<button type="button" class="quitar" id="quitar-' + p.id + '" data-quitar="' + p.id + '" title="' + esc(T.quitarTip[lang]) + '">' + bi(T.quitar) + '</button></div>' +
+          '<div class="badges">' + badges + '</div>' +
+          '<p>' + bi(p) + '</p>' +
+          '<div class="card-foot"><div class="links">' + links + '</div>' +
+          (p.links.length ? '<label class="tick"><input type="checkbox" id="done-' + p.id + '" data-done="' + p.id + '"' + (isDone ? ' checked' : '') + '>' + bi(T.done) + '</label>' : '') +
+          '</div></article>';
+      });
+      out += '</div></div>';
+    });
+    if (!out) out = '<p class="muted">' + bi(T.vacio) + '</p>';
+    document.getElementById("groups").innerHTML = out;
+
+    var quitadas = P.filter(function (p) { return oculto(p.id); });
+    var pap = document.getElementById("papelera");
+    pap.hidden = !quitadas.length;
+    document.getElementById("pap-count").textContent = quitadas.length;
+    document.getElementById("pap-list").innerHTML = quitadas.map(function (p) {
+      return '<li><span>' + esc(p.name) + '</span><button type="button" class="volver" id="volver-' + p.id + '" data-volver="' + p.id + '">' + bi(T.volver) + '</button></li>';
+    }).join("");
+    updateProgress();
+  }
+
+  function updateProgress() {
+    var vis = P.filter(function (p) { return p.links.length && !oculto(p.id); });
+    var total = vis.length;
+    var n = vis.filter(function (p) { return st(p.id).hecho; }).length;
+    document.getElementById("progress").innerHTML = '<span lang="es">' + n + ' ' + T.of.es + ' ' + total + ' ' + T.prog.es + '</span><span lang="nl">' + n + ' ' + T.of.nl + ' ' + total + ' ' + T.prog.nl + '</span>';
+  }
+
+  function setLang(l) {
+    lang = l; html.setAttribute("data-lang", l); html.setAttribute("lang", l);
+    document.querySelectorAll("[data-set-lang]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-set-lang") === l)); });
+    try { localStorage.setItem("rr-lang", l); } catch (e) {}
+  }
+  function setFilter(f) {
+    filter = f;
+    document.querySelectorAll("[data-filter]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-filter") === f)); });
+    try { localStorage.setItem("rr-filter", f); } catch (e) {}
+    render();
+  }
+
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-set-lang]"); if (b) { setLang(b.getAttribute("data-set-lang")); return; }
+    var f = e.target.closest("[data-filter]"); if (f) { setFilter(f.getAttribute("data-filter")); return; }
+    var q = e.target.closest("[data-quitar]"); if (q) { var qid = q.getAttribute("data-quitar"); guardar(qid, { oculto: true }); mostrarDeshacer(qid); return; }
+    var v = e.target.closest("[data-volver]"); if (v) { guardar(v.getAttribute("data-volver"), { oculto: false }); return; }
+    if (e.target.closest("#deshacer")) { if (deshacerId) guardar(deshacerId, { oculto: false }); document.getElementById("toast").hidden = true; deshacerId = null; return; }
+    var w = e.target.closest("[data-word]");
+    if (w) {
+      var txt = w.getAttribute("data-word");
+      var ok = function () { w.classList.add("copied"); setTimeout(function () { w.classList.remove("copied"); }, 1400); };
+      try { navigator.clipboard.writeText(txt).then(ok, function () { selectText(w); }); } catch (err) { selectText(w); }
+    }
+  });
+  function selectText(el) { var r = document.createRange(); r.selectNodeContents(el); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); }
+
+  document.addEventListener("change", function (e) {
+    var id = e.target.getAttribute && e.target.getAttribute("data-done");
+    if (!id) return;
+    guardar(id, { hecho: e.target.checked });
+  });
+
+  document.getElementById("words").innerHTML = WORDS.map(function (w) { return '<button type="button" class="word" data-word="' + esc(w) + '">' + esc(w) + '</button>'; }).join("");
+  setLang(lang === "nl" ? "nl" : "es");
+  setFilter(filter === "all" || CATS.indexOf(filter) > -1 ? filter : "all");
+  conectarDb();
+})();
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () { navigator.serviceWorker.register("./sw.js", { scope: "./" }).catch(function () {}); });
+}
+</script>
+</body>
+</html>

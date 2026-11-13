@@ -1,0 +1,17 @@
+{
+  "id": "/remoto-espanol/",
+  "start_url": "/remoto-espanol/",
+  "scope": "/remoto-espanol/",
+  "name": "Trabajo remoto en español",
+  "short_name": "Remoto ES",
+  "description": "Plataformas y empresas para trabajar en remoto en español desde Bélgica.",
+  "lang": "es",
+  "display": "standalone",
+  "background_color": "#f6f7f9",
+  "theme_color": "#b5450f",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
