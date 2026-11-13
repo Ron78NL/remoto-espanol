@@ -125,6 +125,7 @@ header { display: grid; gap: 14px; }
 .tr-out { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--bg); border-radius: 8px; padding: 12px; }
 .tr-expl { white-space: pre-wrap; font-size: .95rem; }
 .go[disabled] { opacity: .6; cursor: wait; }
+.cv-row { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; font-size: .92rem; }
 .note { font-size: 0.95rem; background: var(--check-soft); border-radius: var(--radius); padding: 12px 14px; }
 .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 @media (max-width: 680px) { .cards { grid-template-columns: 1fr; } }
@@ -194,6 +195,10 @@ footer a { color: var(--muted); }
   </div>
   <h1><span lang="es">Trabajo en español desde casa, para empresas de todo el mundo</span><span lang="nl">Werk in het Spaans van thuis uit, voor bedrijven over de hele wereld</span></h1>
   <p class="lead"><span lang="es">Todas las plataformas en un solo sitio, con una etiqueta que te dice si de verdad puedes trabajar ahí viviendo en Bélgica. Marca las que ya probaste.</span><span lang="nl">Alle platformen op één plek, met een label dat zegt of het echt kan terwijl je in België woont. Vink aan wat je al geprobeerd hebt.</span></p>
+  <div class="cv-row">
+    <a class="go" id="mi-cv" href="https://drive.google.com/file/d/10JiYv4YpObht5E_5CQ4MpDn3EjQbZo1c/view" target="_blank" rel="noopener"><span lang="es">Mi CV (español)</span><span lang="nl">Mijn cv (Spaans)</span></a>
+    <span class="muted"><span lang="es">Se abre en Google Drive con tu cuenta de Gmail. Desde allí puedes descargarlo para enviarlo.</span><span lang="nl">Opent in Google Drive met haar Gmail-account. Van daaruit kan ze het downloaden om mee te sturen.</span></span>
+  </div>
 </header>
 
 <nav class="tabs" role="tablist" aria-label="Secciones">

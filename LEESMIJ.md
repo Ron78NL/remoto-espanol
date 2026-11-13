@@ -21,3 +21,7 @@ Taalknop Spaans ↔ Nederlands.
 - Loopt via hetzelfde Google-script (`accion: "traducir"`), dat Claude aanroept (model claude-sonnet-5-5; ander model kan via scripteigenschap `MODEL`).
 - De Anthropic-sleutel staat in het script onder Projectinstellingen → Scripteigenschappen → `ANTHROPIC_API_KEY` (nooit in de code).
 - Maximaal 60 vertalingen per dag (`MAX_PER_DAG` in het script), zodat de kosten beperkt blijven.
+
+## Cv
+- Knop "Mi CV" bovenaan opent het Spaanse cv in Google Drive. Het bestand is alleen gedeeld met haar Gmail-account (en Ron als eigenaar); het cv zelf staat niet in deze openbare repository.
+- Nieuwe versie van het cv: in Drive "Versies beheren" → nieuwe versie uploaden, dan blijft de link gelijk.
