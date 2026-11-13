@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
 <style>
-/* Layout: één smalle leeskolom; bovenaan de kern, dan een stappenroute, dan de filterbare kaarten met platformen */
+/* Layout: één leeskolom met vier tabbladen (Start, Platformen, Zelfstandige, Vertaler); platformen als compacte lijst, extra uitleg inklapbaar */
 :root {
   --bg: #f6f7f9;
   --surface: #ffffff;
@@ -45,40 +45,43 @@
 
 * { box-sizing: border-box; }
 body { margin: 0; padding-block: env(safe-area-inset-top, 0px) env(safe-area-inset-bottom, 0px); background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 17px; line-height: 1.55; }
-.wrap { max-width: 920px; margin: 0 auto; padding-block: 28px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 44px; }
+.wrap { max-width: 920px; margin: 0 auto; padding-block: 18px 48px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 22px; }
 h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; line-height: 1.15; }
-h1 { font-size: clamp(2rem, 5vw, 2.9rem); font-weight: 700; letter-spacing: -0.01em; }
-h2 { font-size: 1.5rem; font-weight: 700; }
+h1 { font-size: clamp(1.7rem, 4.4vw, 2.3rem); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 1.3rem; font-weight: 700; }
 h3 { font-size: 1.12rem; font-weight: 700; }
 p { margin: 0; max-width: 65ch; }
 a { color: var(--accent); }
 a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .muted { color: var(--muted); }
-section { display: grid; gap: 16px; }
+section { display: grid; gap: 12px; }
 
 /* taal */
 html[data-lang="es"] [lang="nl"], html[data-lang="nl"] [lang="es"] { display: none !important; }
 
-header { display: grid; gap: 14px; }
-.top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+header { display: grid; gap: 10px; }
+.top-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.top { display: flex; justify-content: flex-end; align-items: center; gap: 12px; flex-wrap: wrap; }
 .eyebrow { font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); font-weight: 700; }
 .lang { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--surface); }
 .lang button { border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 0.9rem; font-weight: 700; padding: 6px 14px; border-radius: 999px; cursor: pointer; }
 .lang button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
-.lead { font-size: 1.12rem; color: var(--muted); }
+.lead { font-size: 1.02rem; color: var(--muted); }
 
-/* kern */
-.keys { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-.key { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; display: grid; gap: 8px; align-content: start; }
-.key strong { font-family: var(--font-display); font-size: 1.05rem; }
-.key.warn { background: var(--accent-soft); border-color: transparent; }
-@media (max-width: 760px) { .keys { grid-template-columns: 1fr; } }
+/* kern: lijst met korte regels in plaats van losse kaarten */
+.esencial { margin: 0; display: grid; border-top: 1px solid var(--line); }
+.esencial > div { display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 1fr); gap: 4px 20px; padding-block: 12px; border-bottom: 1px solid var(--line); }
+.esencial dt { font-weight: 700; }
+.esencial dd { margin: 0; color: var(--muted); }
+.esencial .aviso dt { color: var(--no); }
+@media (max-width: 640px) { .esencial > div { grid-template-columns: 1fr; } }
+.enlace { font: inherit; color: var(--accent); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
 
 /* route */
 .route { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; counter-reset: stap; }
-.route li { counter-increment: stap; display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 14px; padding-block: 14px; border-top: 1px solid var(--line); }
+.route li { counter-increment: stap; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; padding-block: 10px; border-top: 1px solid var(--line); }
 .route li:last-child { border-bottom: 1px solid var(--line); }
-.route li::before { content: counter(stap); font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; border: 2px solid var(--accent); color: var(--accent); }
+.route li::before { content: counter(stap); font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; border: 2px solid var(--accent); color: var(--accent); }
 .route .txt { display: grid; gap: 4px; }
 
 /* filters */
@@ -89,8 +92,8 @@ header { display: grid; gap: 14px; }
 .progress { font-size: 0.95rem; color: var(--muted); font-variant-numeric: tabular-nums; }
 .legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 0.92rem; color: var(--muted); }
 
-.group { display: grid; gap: 12px; }
-.group h3 { font-size: 1.05rem; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; font-family: var(--font-body); }
+.group { display: grid; gap: 8px; }
+.group h3 { font-size: .9rem; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; font-family: var(--font-body); }
 .quitar { border: 1px solid var(--line); background: transparent; color: var(--muted); font: inherit; font-size: 0.85rem; padding: 4px 10px; border-radius: 999px; cursor: pointer; }
 .quitar:hover { border-color: var(--no); color: var(--no); background: var(--no-soft); }
 .sync { font-size: 0.88rem; color: var(--muted); }
@@ -105,10 +108,12 @@ header { display: grid; gap: 14px; }
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 10px 12px 10px 16px; border-radius: 10px; display: flex; gap: 14px; align-items: center; max-width: calc(100% - 32px); z-index: 20; box-shadow: 0 6px 24px rgba(0,0,0,.25); }
 .toast[hidden] { display: none; }
 .toast button { background: transparent; color: var(--bg); border: 1px solid currentColor; font: inherit; font-weight: 700; padding: 5px 12px; border-radius: 8px; cursor: pointer; white-space: nowrap; }
-.tabs { display: flex; gap: 6px; flex-wrap: wrap; border-bottom: 2px solid var(--line); margin-top: -20px; }
-.tabs button { font: inherit; font-weight: 700; font-size: 1rem; border: 0; background: transparent; color: var(--muted); padding: 10px 14px; border-bottom: 3px solid transparent; margin-bottom: -2px; cursor: pointer; }
+.tabs { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; border-bottom: 2px solid var(--line); position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs button { font: inherit; font-weight: 700; font-size: 1rem; border: 0; background: transparent; color: var(--muted); padding: 10px 12px; border-bottom: 3px solid transparent; margin-bottom: -2px; cursor: pointer; white-space: nowrap; }
 .tabs button[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
-.panel { display: grid; gap: 44px; }
+@media (max-width: 480px) { .tabs button { font-size: .88rem; padding: 10px 6px; flex: 1 1 auto; } .tabs { gap: 0; } }
+.panel { display: grid; gap: 28px; }
 .panel[hidden] { display: none; }
 .tabla-wrap { overflow-x: auto; }
 .tabla { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); font-size: .97rem; }
@@ -125,22 +130,31 @@ header { display: grid; gap: 14px; }
 .tr-out { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--bg); border-radius: 8px; padding: 12px; }
 .tr-expl { white-space: pre-wrap; font-size: .95rem; }
 .go[disabled] { opacity: .6; cursor: wait; }
-.cv-row { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; font-size: .92rem; }
-.note { font-size: 0.95rem; background: var(--check-soft); border-radius: var(--radius); padding: 12px 14px; }
-.cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-@media (max-width: 680px) { .cards { grid-template-columns: 1fr; } }
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.go.small { font-size: .88rem; padding: 6px 12px; }
+/* inklapbare blokken */
+.plegable { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding-block: 10px; }
+.plegable > summary { cursor: pointer; font-weight: 700; list-style-position: inside; }
+.plegable > summary h2 { display: inline; font-size: 1.15rem; }
+.plegable[open] { display: grid; gap: 12px; }
+.plegable ul { margin: 0; padding-left: 1.2em; display: grid; gap: 4px; }
+.note { font-size: 0.9rem; color: var(--muted); border-left: 3px solid var(--check); padding-left: 10px; }
+.cards { display: grid; border-top: 1px solid var(--line); }
+.card { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 18px; row-gap: 4px; padding-block: 12px; border-bottom: 1px solid var(--line); min-width: 0; }
+.card > .card-head, .card > .badges, .card > p { grid-column: 1; }
+.card > .card-foot { grid-column: 2; grid-row: 1 / span 3; flex-direction: column; align-items: flex-end; justify-content: flex-start; }
+.card > .seg { grid-column: 1 / -1; }
+@media (max-width: 640px) { .card { grid-template-columns: 1fr; } .card > .card-foot { grid-column: 1; grid-row: auto; flex-direction: row; align-items: center; justify-content: space-between; } }
 .card.done { opacity: 0.72; }
 .card-head { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
-.card-head h4 { margin: 0; font-family: var(--font-display); font-size: 1.15rem; }
+.card-head h4 { margin: 0; font-family: var(--font-display); font-size: 1.05rem; }
 .badges { display: flex; flex-wrap: wrap; gap: 6px; }
 .badge { font-size: 0.8rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
 .b-ok { background: var(--ok-soft); color: var(--ok); }
 .b-check { background: var(--check-soft); color: var(--check); }
 .b-no { background: var(--no-soft); color: var(--no); }
 .b-tag { background: transparent; color: var(--muted); border: 1px solid var(--line); font-weight: 400; }
-.card p { font-size: 0.98rem; }
-.seg { border-top: 1px solid var(--line); padding-top: 8px; }
+.card p { font-size: 0.93rem; color: var(--muted); }
+.seg { padding-top: 2px; }
 .seg summary { cursor: pointer; font-size: 0.92rem; color: var(--muted); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .seg[open] { display: grid; gap: 8px; }
 .seg-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 0.92rem; }
@@ -187,55 +201,50 @@ footer a { color: var(--muted); }
 
 <header>
   <div class="top">
-    <span class="eyebrow"><span lang="es">Mapa de oportunidades · Bélgica</span><span lang="nl">Kaart van mogelijkheden · België</span></span>
-    <div class="lang" role="group" aria-label="Idioma / Taal">
+    <div class="top-actions">
+      <a class="go small" id="mi-cv" href="https://drive.google.com/file/d/10JiYv4YpObht5E_5CQ4MpDn3EjQbZo1c/view" target="_blank" rel="noopener" title="Google Drive"><span lang="es">Mi CV</span><span lang="nl">Mijn cv</span></a>
+      <div class="lang" role="group" aria-label="Idioma / Taal">
       <button type="button" id="btn-es" data-set-lang="es" aria-pressed="true">Español</button>
       <button type="button" id="btn-nl" data-set-lang="nl" aria-pressed="false">Nederlands</button>
     </div>
+    </div>
   </div>
-  <h1><span lang="es">Trabajo en español desde casa, para empresas de todo el mundo</span><span lang="nl">Werk in het Spaans van thuis uit, voor bedrijven over de hele wereld</span></h1>
-  <p class="lead"><span lang="es">Todas las plataformas en un solo sitio, con una etiqueta que te dice si de verdad puedes trabajar ahí viviendo en Bélgica. Marca las que ya probaste.</span><span lang="nl">Alle platformen op één plek, met een label dat zegt of het echt kan terwijl je in België woont. Vink aan wat je al geprobeerd hebt.</span></p>
-  <div class="cv-row">
-    <a class="go" id="mi-cv" href="https://drive.google.com/file/d/10JiYv4YpObht5E_5CQ4MpDn3EjQbZo1c/view" target="_blank" rel="noopener"><span lang="es">Mi CV (español)</span><span lang="nl">Mijn cv (Spaans)</span></a>
-    <span class="muted"><span lang="es">Se abre en Google Drive con tu cuenta de Gmail. Desde allí puedes descargarlo para enviarlo.</span><span lang="nl">Opent in Google Drive met haar Gmail-account. Van daaruit kan ze het downloaden om mee te sturen.</span></span>
-  </div>
+  <h1><span lang="es">Trabajo en español desde casa</span><span lang="nl">Werk in het Spaans van thuis uit</span></h1>
+  <p class="lead"><span lang="es">Dónde buscar, cómo trabajar como autónoma para empresas de cualquier país, y un traductor para tus mensajes.</span><span lang="nl">Waar zoeken, hoe als zelfstandige werken voor bedrijven uit elk land, en een vertaler voor haar berichten.</span></p>
 </header>
 
 <nav class="tabs" role="tablist" aria-label="Secciones">
-  <button type="button" role="tab" id="tab-btn-ofertas" data-tab="ofertas" aria-selected="true" aria-controls="tab-ofertas"><span lang="es">Buscar trabajo</span><span lang="nl">Werk zoeken</span></button>
-  <button type="button" role="tab" id="tab-btn-autonoma" data-tab="autonoma" aria-selected="false" aria-controls="tab-autonoma"><span lang="es">Trabajar como autónoma</span><span lang="nl">Werken als zelfstandige</span></button>
+  <button type="button" role="tab" id="tab-btn-inicio" data-tab="inicio" aria-selected="true" aria-controls="tab-inicio"><span lang="es">Inicio</span><span lang="nl">Start</span></button>
+  <button type="button" role="tab" id="tab-btn-plataformas" data-tab="plataformas" aria-selected="false" aria-controls="tab-plataformas"><span lang="es">Plataformas</span><span lang="nl">Platformen</span></button>
+  <button type="button" role="tab" id="tab-btn-autonoma" data-tab="autonoma" aria-selected="false" aria-controls="tab-autonoma"><span lang="es">Autónoma</span><span lang="nl">Zelfstandige</span></button>
   <button type="button" role="tab" id="tab-btn-traductor" data-tab="traductor" aria-selected="false" aria-controls="tab-traductor"><span lang="es">Traductor</span><span lang="nl">Vertaler</span></button>
 </nav>
 
-<div class="panel" id="tab-ofertas" role="tabpanel" aria-labelledby="tab-btn-ofertas">
+<div class="panel" id="tab-inicio" role="tabpanel" aria-labelledby="tab-btn-inicio">
+<section aria-labelledby="h-res">
+  <h2 id="h-res"><span lang="es">Mis solicitudes</span><span lang="nl">Mijn sollicitaties</span></h2>
+  <div class="box" id="resumen"></div>
+</section>
 
 <section aria-labelledby="h-keys">
   <h2 id="h-keys"><span lang="es">Lo esencial</span><span lang="nl">De kern</span></h2>
-  <div class="keys">
-    <div class="key">
-      <strong><span lang="es">España y Latinoamérica: sí, como autónoma</span><span lang="nl">Spanje en Latijns-Amerika: ja, als zelfstandige</span></strong>
-      <p><span lang="es">Un contrato de empleada en España casi siempre exige vivir allí. Pero muchas empresas de España y Latinoamérica aceptan <b>contractors</b>: trabajas desde casa y les mandas una factura cada mes. Busca <b>worldwide</b>, <b>contractor</b> o <b>cualquier país</b>.</span><span lang="nl">Een werknemerscontract in Spanje vraagt bijna altijd dat je er woont. Maar veel bedrijven in Spanje en Latijns-Amerika werken met <b>contractors</b>: je werkt thuis en stuurt hen elke maand een factuur. Zoek op <b>worldwide</b>, <b>contractor</b> of <b>cualquier país</b>.</span></p>
-    </div>
-    <div class="key">
-      <strong><span lang="es">Con solo español, lo más rápido es freelance</span><span lang="nl">Met alleen Spaans gaat freelance het snelst</span></strong>
-      <p><span lang="es">Clases de español online, tareas para inteligencia artificial, transcripción y asistente virtual para clientes hispanos. Para cobrar en Bélgica necesitas el estatuto de autónoma (ver abajo).</span><span lang="nl">Online Spaanse les, taken voor AI-bedrijven, transcriptie en virtueel assistent voor Spaanstalige klanten. Om in België te factureren is het statuut van zelfstandige nodig (zie onderaan).</span></p>
-    </div>
-    <div class="key">
-      <strong><span lang="es">Hablas neerlandés: busca trabajo por teléfono</span><span lang="nl">Ze spreekt Nederlands: kies telefoonwerk</span></strong>
-      <p><span lang="es">Español y neerlandés hablado juntos son una ventaja en Bélgica. Elige puestos de <b>atención telefónica</b>, donde casi no hay que escribir en neerlandés. Y habla con tu consultora de <b>Adecco</b>: ya te conocen.</span><span lang="nl">Spaans plus gesproken Nederlands is in België een troef. Kies <b>telefonische klantendienst</b>, waar ze weinig Nederlands moet schrijven. En spreek haar consulent bij <b>Adecco</b> aan: die kent haar al.</span></p>
-    </div>
-    <div class="key warn">
-      <strong><span lang="es">Nunca pagues por un trabajo</span><span lang="nl">Betaal nooit voor een job</span></strong>
-      <p><span lang="es">Ni por formación, ni por equipo, ni por un "depósito". Una empresa seria te paga a ti, no al revés.</span><span lang="nl">Niet voor opleiding, materiaal of een "waarborg". Een echte werkgever betaalt jou, niet omgekeerd.</span></p>
-    </div>
-  </div>
+  <dl class="esencial">
+    <div><dt><span lang="es">Trabaja para empresas de todo el mundo</span><span lang="nl">Werk voor bedrijven over de hele wereld</span></dt>
+      <dd><span lang="es">Como autónoma complementaria facturas cada mes a empresas de España, Latinoamérica u otro país. Ellas no hacen ningún trámite en Bélgica. Todo explicado en <button type="button" class="enlace" data-tab="autonoma">Autónoma</button>.</span><span lang="nl">Als zelfstandige in bijberoep factureert ze maandelijks aan bedrijven in Spanje, Latijns-Amerika of elders. Die hoeven niets te regelen in België. Uitleg bij <button type="button" class="enlace" data-tab="autonoma">Zelfstandige</button>.</span></dd></div>
+    <div><dt><span lang="es">Tu neerlandés hablado es una ventaja</span><span lang="nl">Haar gesproken Nederlands is een troef</span></dt>
+      <dd><span lang="es">Busca atención telefónica, donde casi no hay que escribir. Y pregunta a tu consultora de Adecco: ya te conocen.</span><span lang="nl">Zoek telefonische klantendienst, waar weinig geschreven wordt. En vraag het aan de consulent bij Adecco: die kent haar al.</span></dd></div>
+    <div><dt><span lang="es">«Remoto» no siempre es «desde cualquier país»</span><span lang="nl">«Remote» is niet altijd «vanuit elk land»</span></dt>
+      <dd><span lang="es">Busca ofertas con <b>worldwide</b>, <b>anywhere</b>, <b>contractor</b> o <b>cualquier país</b>.</span><span lang="nl">Zoek vacatures met <b>worldwide</b>, <b>anywhere</b>, <b>contractor</b> of <b>cualquier país</b>.</span></dd></div>
+    <div class="aviso"><dt><span lang="es">Nunca pagues por un trabajo</span><span lang="nl">Betaal nooit voor een job</span></dt>
+      <dd><span lang="es">Ni formación, ni equipo, ni «depósito». Una empresa seria te paga a ti.</span><span lang="nl">Geen opleiding, materiaal of «waarborg». Een echte werkgever betaalt haar.</span></dd></div>
+  </dl>
 </section>
 
 <section aria-labelledby="h-route">
   <h2 id="h-route"><span lang="es">Ruta recomendada</span><span lang="nl">Aanbevolen volgorde</span></h2>
   <ol class="route">
     <li><div class="txt"><h3><span lang="es">Activa alertas de empleo</span><span lang="nl">Zet vacature-alerts aan</span></h3>
-      <p class="muted"><span lang="es">En LinkedIn e Indeed, con las búsquedas ya preparadas de abajo. Así las ofertas llegan solas a tu correo.</span><span lang="nl">Op LinkedIn en Indeed, met de klaargezette zoekopdrachten hieronder. Dan komen nieuwe vacatures vanzelf in je mailbox.</span></p></div></li>
+      <p class="muted"><span lang="es">En LinkedIn e Indeed, con las búsquedas ya preparadas en «Plataformas». Así las ofertas llegan solas a tu correo.</span><span lang="nl">Op LinkedIn en Indeed, met de klaargezette zoekopdrachten bij «Platformen». Dan komen nieuwe vacatures vanzelf in je mailbox.</span></p></div></li>
     <li><div class="txt"><h3><span lang="es">Pide consejo sobre el estatuto de autónoma</span><span lang="nl">Vraag advies over het statuut van zelfstandige</span></h3>
       <p class="muted"><span lang="es">Una caja de seguro social (sociaal verzekeringsfonds) te lo explica gratis antes de empezar. Así cobras de forma legal.</span><span lang="nl">Een sociaal verzekeringsfonds legt het gratis uit voor je start. Zo is alles wat je verdient in orde.</span></p></div></li>
     <li><div class="txt"><h3><span lang="es">Empieza con una o dos plataformas flexibles</span><span lang="nl">Begin met één of twee flexibele platformen</span></h3>
@@ -245,11 +254,19 @@ footer a { color: var(--muted); }
   </ol>
 </section>
 
-<section aria-labelledby="h-res">
-  <h2 id="h-res"><span lang="es">Mis solicitudes</span><span lang="nl">Mijn sollicitaties</span></h2>
-  <div class="box" id="resumen"></div>
-</section>
+<details class="plegable">
+  <summary><span lang="es">Señales de estafa</span><span lang="nl">Signalen van oplichting</span></summary>
+  <ul>
+        <li><span lang="es">Te piden dinero para formación, equipo o un depósito.</span><span lang="nl">Ze vragen geld voor opleiding, materiaal of een waarborg.</span></li>
+        <li><span lang="es">Solo hablan por WhatsApp o Telegram, sin web ni nombre de empresa.</span><span lang="nl">Contact enkel via WhatsApp of Telegram, zonder website of bedrijfsnaam.</span></li>
+        <li><span lang="es">"Trabajos de tareas" en los que primero tienes que recargar saldo.</span><span lang="nl">"Taakjobs" waarbij je eerst saldo moet opladen.</span></li>
+        <li><span lang="es">Te mandan un cheque o dinero y te piden devolver una parte.</span><span lang="nl">Ze sturen geld of een cheque en vragen een deel terug te storten.</span></li>
+        <li><span lang="es">Un sueldo muy alto por un trabajo muy fácil.</span><span lang="nl">Een heel hoog loon voor heel makkelijk werk.</span></li>
+      </ul>
+</details>
+</div>
 
+<div class="panel" id="tab-plataformas" role="tabpanel" aria-labelledby="tab-btn-plataformas" hidden>
 <section aria-labelledby="h-plat">
   <h2 id="h-plat"><span lang="es">Plataformas y empresas</span><span lang="nl">Platformen en bedrijven</span></h2>
   <div class="legend">
@@ -278,56 +295,11 @@ footer a { color: var(--muted); }
   </details>
 </section>
 
-<section aria-labelledby="h-words">
-  <h2 id="h-words"><span lang="es">Palabras para buscar</span><span lang="nl">Zoekwoorden</span></h2>
+<details class="plegable" id="h-words-box">
+  <summary><span lang="es">Palabras para buscar</span><span lang="nl">Zoekwoorden</span></summary>
   <p class="muted"><span lang="es">Toca una palabra para copiarla y pégala en cualquier buscador. Muchas ofertas están en inglés aunque el trabajo sea en español.</span><span lang="nl">Tik op een woord om het te kopiëren en plak het in een zoeksite. Veel vacatures staan in het Engels, ook als het werk in het Spaans is.</span></p>
   <div class="words" id="words"></div>
-</section>
-
-<section aria-labelledby="h-be">
-  <h2 id="h-be"><span lang="es">Trabajar desde Bélgica: lo práctico</span><span lang="nl">Werken vanuit België: het praktische</span></h2>
-  <div class="two">
-    <div class="box">
-      <h3><span lang="es">Autónoma (zelfstandige)</span><span lang="nl">Zelfstandige</span></h3>
-      <p><button type="button" class="volver" data-tab="autonoma"><span lang="es">Toda la explicación en «Trabajar como autónoma»</span><span lang="nl">Volledige uitleg bij «Werken als zelfstandige»</span></button></p>
-      <ul>
-        <li><span lang="es"><b>Complementaria (bijberoep)</b>: solo si además trabajas como empleada al menos a media jornada.</span><span lang="nl"><b>Bijberoep</b>: alleen als je daarnaast minstens halftijds werknemer bent.</span></li>
-        <li><span lang="es"><b>Principal (hoofdberoep)</b>: si no tienes otro trabajo. Las cuotas sociales son más altas.</span><span lang="nl"><b>Hoofdberoep</b>: als je geen ander werk hebt. De sociale bijdragen zijn hoger.</span></li>
-        <li><span lang="es">Número de empresa (KBO): unos <span class="num">€ 111,50</span>.</span><span lang="nl">Ondernemingsnummer (KBO): ongeveer <span class="num">€ 111,50</span>.</span></li>
-        <li><span lang="es">En complementaria no pagas cuotas sociales si ganas menos de <span class="num">€ 1.922,16</span> al año; por encima, mínimo <span class="num">€ 98,51</span> por trimestre (2026).</span><span lang="nl">In bijberoep geen sociale bijdragen onder <span class="num">€ 1.922,16</span> per jaar; daarboven minstens <span class="num">€ 98,51</span> per kwartaal (2026).</span></li>
-      </ul>
-      <div class="links">
-        <a class="go alt" href="https://www.vlaio.be/nl/begeleiding-advies/start/ondernemen-bijberoep/welke-stappen-moet-je-ondernemen-om-te-starten-als-zelfstandige-bijberoep" target="_blank" rel="noopener">VLAIO: stappen</a>
-        <a class="go alt" href="https://www.partena-professional.be/nl/starten-als-zelfstandige" target="_blank" rel="noopener">Partena: starten</a>
-      </div>
-      <p class="muted" style="font-size:.9rem"><span lang="es">Cifras de páginas de Partena y Accountable (2026). Confírmalas con tu caja de seguro social.</span><span lang="nl">Bedragen van Partena en Accountable (2026). Laat ze bevestigen door je sociaal verzekeringsfonds.</span></p>
-    </div>
-    <div class="box">
-      <h3><span lang="es">Contrato con una empresa extranjera</span><span lang="nl">Contract bij een buitenlands bedrijf</span></h3>
-      <ul>
-        <li><span lang="es">Si vives y trabajas en Bélgica, pagas impuestos y seguridad social en Bélgica, aunque la empresa sea de España.</span><span lang="nl">Woon en werk je in België, dan betaal je belasting en sociale zekerheid in België, ook als het bedrijf Spaans is.</span></li>
-        <li><span lang="es">Por eso muchas empresas españolas dicen "solo residentes en España": para ellas es más trabajo contratarte.</span><span lang="nl">Daarom schrijven veel Spaanse bedrijven "enkel inwoners van Spanje": jou aannemen is voor hen extra papierwerk.</span></li>
-        <li><span lang="es"><b>Como autónoma sí funciona:</b> trabajas para la empresa española o latinoamericana como contractor y le mandas una factura. Así ellos no tienen trámites en Bélgica.</span><span lang="nl"><b>Als zelfstandige kan het wel:</b> je werkt als contractor voor het Spaanse of Latijns-Amerikaanse bedrijf en stuurt een factuur. Dan hebben zij geen papierwerk in België.</span></li>
-        <li><span lang="es">Pregunta siempre en la entrevista: <i>"¿Podéis contratar a alguien que vive en Bélgica?"</i></span><span lang="nl">Vraag het altijd in het gesprek: <i>"Kunnen jullie iemand aannemen die in België woont?"</i></span></li>
-      </ul>
-    </div>
-    <div class="box alarm">
-      <h3><span lang="es">Señales de estafa</span><span lang="nl">Signalen van oplichting</span></h3>
-      <ul>
-        <li><span lang="es">Te piden dinero para formación, equipo o un depósito.</span><span lang="nl">Ze vragen geld voor opleiding, materiaal of een waarborg.</span></li>
-        <li><span lang="es">Solo hablan por WhatsApp o Telegram, sin web ni nombre de empresa.</span><span lang="nl">Contact enkel via WhatsApp of Telegram, zonder website of bedrijfsnaam.</span></li>
-        <li><span lang="es">"Trabajos de tareas" en los que primero tienes que recargar saldo.</span><span lang="nl">"Taakjobs" waarbij je eerst saldo moet opladen.</span></li>
-        <li><span lang="es">Te mandan un cheque o dinero y te piden devolver una parte.</span><span lang="nl">Ze sturen geld of een cheque en vragen een deel terug te storten.</span></li>
-        <li><span lang="es">Un sueldo muy alto por un trabajo muy fácil.</span><span lang="nl">Een heel hoog loon voor heel makkelijk werk.</span></li>
-      </ul>
-    </div>
-    <div class="box">
-      <h3><span lang="es">Español + neerlandés hablado</span><span lang="nl">Spaans + gesproken Nederlands</span></h3>
-      <p><span lang="es">En Bélgica casi todos los empleos de atención al cliente piden dos idiomas, y tú ya hablas dos. Busca con palabras como <b>Spaans</b>, <b>klantendienst</b> y <b>telefonisch</b>. Ofertas con español y neerlandés son pocas, así que actívate pronto cuando salga una. Para escribir mejor en neerlandés hay cursos baratos para adultos (Huis van het Nederlands, VDAB o un CVO).</span><span lang="nl">In België vragen bijna alle klantendienstjobs twee talen, en die heeft ze. Zoek met woorden als <b>Spaans</b>, <b>klantendienst</b> en <b>telefonisch</b>. Vacatures met Spaans én Nederlands zijn schaars, dus reageer snel als er een verschijnt. Om beter Nederlands te schrijven zijn er goedkope cursussen voor volwassenen (Huis van het Nederlands, VDAB of een CVO).</span></p>
-    </div>
-  </div>
-</section>
-
+</details>
 </div>
 
 <div class="panel" id="tab-autonoma" role="tabpanel" aria-labelledby="tab-btn-autonoma" hidden>
@@ -371,8 +343,8 @@ footer a { color: var(--muted); }
   </ol>
 </section>
 
-<section aria-labelledby="h-aut-coste">
-  <h2 id="h-aut-coste"><span lang="es">¿Cuánto cuesta?</span><span lang="nl">Wat kost het?</span></h2>
+<details class="plegable seccion" id="h-aut-coste-box">
+  <summary><h2 id="h-aut-coste"><span lang="es">¿Cuánto cuesta?</span><span lang="nl">Wat kost het?</span></h2></summary>
   <div class="tabla-wrap"><table class="tabla">
     <thead><tr><th><span lang="es">Concepto</span><span lang="nl">Wat</span></th><th><span lang="es">Importe (2026)</span><span lang="nl">Bedrag (2026)</span></th></tr></thead>
     <tbody>
@@ -386,10 +358,10 @@ footer a { color: var(--muted); }
   <div class="note">
     <p><span lang="es"><b>Ejemplo:</b> facturas 600 € al mes a una empresa de España = 7.200 € al año. Con 500 € de gastos (internet, auriculares, parte del ordenador) tu beneficio es 6.700 €. Cotizaciones: unos 1.370 € al año, unos 343 € por trimestre. Después viene el impuesto, que depende de tu sueldo total. Es un cálculo aproximado.</span><span lang="nl"><b>Voorbeeld:</b> ze factureert € 600 per maand aan een Spaans bedrijf = € 7.200 per jaar. Met € 500 kosten (internet, headset, deel van de computer) is de winst € 6.700. Sociale bijdragen: ongeveer € 1.370 per jaar, zo'n € 343 per kwartaal. Daarna komt de belasting, die afhangt van het totale inkomen. Dit is een ruwe schatting.</span></p>
   </div>
-</section>
+</details>
 
-<section aria-labelledby="h-aut-iva">
-  <h2 id="h-aut-iva"><span lang="es">Clientes en otros países: el IVA</span><span lang="nl">Klanten in het buitenland: de btw</span></h2>
+<details class="plegable seccion" id="h-aut-iva-box">
+  <summary><h2 id="h-aut-iva"><span lang="es">Clientes en otros países: el IVA</span><span lang="nl">Klanten in het buitenland: de btw</span></h2></summary>
   <div class="two">
     <div class="box">
       <h3><span lang="es">Empresa en la Unión Europea (España, Portugal…)</span><span lang="nl">Bedrijf in de Europese Unie (Spanje, Portugal…)</span></h3>
@@ -414,19 +386,19 @@ footer a { color: var(--muted); }
       <p><span lang="es">Tú decides cómo organizas tu trabajo. Mejor tener más de un cliente. Si una empresa te pone horario fijo, jefe y te trata como empleada, eso es un «falso autónomo» y no está permitido.</span><span lang="nl">Zij beslist hoe ze haar werk organiseert. Liefst meer dan één klant. Legt een bedrijf vaste uren en een baas op en behandelt het haar als werknemer, dan is dat schijnzelfstandigheid, en dat mag niet.</span></p>
     </div>
   </div>
-</section>
+</details>
 
-<section aria-labelledby="h-aut-msg">
-  <h2 id="h-aut-msg"><span lang="es">Mensaje para una empresa</span><span lang="nl">Bericht voor een bedrijf</span></h2>
+<details class="plegable seccion" id="h-aut-msg-box">
+  <summary><h2 id="h-aut-msg"><span lang="es">Mensaje para una empresa</span><span lang="nl">Bericht voor een bedrijf</span></h2></summary>
   <p class="muted"><span lang="es">Cuando una empresa dice «solo residentes en España» o «solo Latinoamérica», manda este mensaje. Toca el botón para copiarlo.</span><span lang="nl">Zegt een bedrijf «enkel inwoners van Spanje» of «enkel Latijns-Amerika», stuur dan dit bericht (in het Spaans). Tik op de knop om het te kopiëren.</span></p>
   <div class="box">
     <p id="msg-empresa">Hola: vivo en Bélgica y trabajo como autónoma registrada. Puedo trabajar con vosotros en remoto como proveedora externa: cada mes os envío una factura y no tenéis que hacer ningún trámite laboral ni contratarme. Dentro de la Unión Europea la factura va sin IVA (inversión del sujeto pasivo). Hablo español nativo y neerlandés, y tengo más de 14 años de experiencia en ventas y atención al cliente. ¿Os interesa hablarlo?</p>
     <div><button type="button" class="go" id="copiar-msg"><span lang="es">Copiar mensaje</span><span lang="nl">Bericht kopiëren</span></button></div>
   </div>
-</section>
+</details>
 
-<section aria-labelledby="h-aut-ayuda">
-  <h2 id="h-aut-ayuda"><span lang="es">Quién te ayuda gratis</span><span lang="nl">Wie helpt gratis</span></h2>
+<details class="plegable seccion" id="h-aut-ayuda-box">
+  <summary><h2 id="h-aut-ayuda"><span lang="es">Quién te ayuda gratis</span><span lang="nl">Wie helpt gratis</span></h2></summary>
   <div class="links">
     <a class="go alt" href="https://www.vlaio.be/nl/begeleiding-advies/start/ondernemen-bijberoep/voorwaarden-om-te-starten-bijberoep" target="_blank" rel="noopener">VLAIO: <span lang="es">condiciones</span><span lang="nl">voorwaarden</span></a>
     <a class="go alt" href="https://www.vlaanderen.be/economie-en-ondernemen/een-eigen-zaak-starten/starten-met-een-onderneming/zelfstandige-in-bijberoep" target="_blank" rel="noopener">Vlaanderen.be</a>
@@ -434,7 +406,7 @@ footer a { color: var(--muted); }
     <a class="go alt" href="https://www.unizo.be/ondernemersgids/financieel/sociaal-statuut/welke-bijdragen-betalen" target="_blank" rel="noopener">Unizo: <span lang="es">cotizaciones</span><span lang="nl">bijdragen</span></a>
   </div>
   <p class="muted" style="font-size:.9rem"><span lang="es">Esto es una explicación, no un consejo legal. Cifras de 2026 según VLAIO, Unizo, Accountable y la Cámara belga. Confírmalas siempre con tu caja de seguro social.</span><span lang="nl">Dit is uitleg, geen juridisch advies. Bedragen van 2026 volgens VLAIO, Unizo, Accountable en de Kamer. Laat ze altijd bevestigen door het sociaal verzekeringsfonds.</span></p>
-</section>
+</details>
 
 </div>
 
@@ -479,7 +451,7 @@ footer a { color: var(--muted); }
 
 <footer>
   <p><span lang="es">Investigado el 13 de noviembre de 2026. Las ofertas cambian cada semana: abre siempre la oferta original y comprueba país, sueldo y tipo de contrato.</span><span lang="nl">Opgezocht op 13 november 2026. Vacatures veranderen elke week: open altijd de originele vacature en controleer land, loon en type contract.</span></p>
-  <p><span lang="es">Fuentes consultadas:</span><span lang="nl">Geraadpleegde bronnen:</span></p>
+  <details><summary><span lang="es">Fuentes consultadas</span><span lang="nl">Geraadpleegde bronnen</span></summary>
   <ul>
     <li><a href="https://remotive.com/remote/jobs/customer-service/spanish-customer-support-4549656" target="_blank" rel="noopener">Remotive – Spanish Customer Support (Cross Border Talents)</a></li>
     <li><a href="https://www.workingnomads.com/remote-spanish-jobs-europe" target="_blank" rel="noopener">Working Nomads – Remote Spanish jobs Europe</a></li>
@@ -498,6 +470,7 @@ footer a { color: var(--muted); }
     <li><a href="https://mills-reeve.com/publications/working-in-belgium-issues-for-uk-employers-to-cons" target="_blank" rel="noopener">Mills &amp; Reeve – Working in Belgium (sociale zekerheid)</a></li>
     <li><a href="https://trabajarporelmundo.org/ensenar-espanol-online/" target="_blank" rel="noopener">Trabajar por el mundo – Enseñar español online</a></li>
   </ul>
+  </details>
 </footer>
 </div>
 
@@ -550,7 +523,7 @@ footer a { color: var(--muted); }
       rechazado:  { es: "No salió", nl: "Afgewezen" },
       conseguido: { es: "¡Conseguido!", nl: "Gelukt!" }
     },
-    resVacio: { es: "Todavía no sigues ninguna empresa. Abre «Mi seguimiento» en una tarjeta y elige en qué punto estás.", nl: "Je volgt nog geen bedrijven op. Open «Mijn opvolging» op een kaart en kies hoe ver je staat." },
+    resVacio: { es: "Todavía no sigues ninguna empresa. En «Plataformas», abre «Mi seguimiento» debajo de una empresa y elige en qué punto estás.", nl: "Nog geen bedrijven opgevolgd. Open bij «Platformen» «Mijn opvolging» onder een bedrijf en kies hoe ver ze staat." },
     vacio: { es: "No queda nada en esta categoría. Las que quitaste están abajo, en «Quitadas».", nl: "Niets meer over in deze categorie. Wat je weghaalde staat onderaan bij «Weggehaald»." },
     prog: { es: "probadas", nl: "geprobeerd" },
     of:   { es: "de", nl: "van" }
@@ -981,13 +954,15 @@ footer a { color: var(--muted); }
   setFilter(filter === "all" || CATS.indexOf(filter) > -1 ? filter : "all");
   listo = true;
   function setTab(t, desdeClick) {
-    if (t !== "autonoma" && t !== "traductor") t = "ofertas";
-    ["ofertas", "autonoma", "traductor"].forEach(function (x) {
+    var TABS = ["inicio", "plataformas", "autonoma", "traductor"];
+    if (t === "ofertas") t = "plataformas";
+    if (TABS.indexOf(t) < 0) t = "inicio";
+    TABS.forEach(function (x) {
       document.getElementById("tab-" + x).hidden = x !== t;
       document.getElementById("tab-btn-" + x).setAttribute("aria-selected", String(x === t));
     });
     if (desdeClick) {
-      try { history.replaceState(null, "", t === "ofertas" ? location.pathname + location.search : "#" + t); } catch (e) {}
+      try { history.replaceState(null, "", t === "inicio" ? location.pathname + location.search : "#" + t); } catch (e) {}
       window.scrollTo(0, 0);
     }
   }
