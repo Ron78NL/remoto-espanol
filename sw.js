@@ -1,7 +1,7 @@
 // Offline-opslag voor "Trabajo remoto en español".
 // Eigen voorvoegsel "rre-": ruim nooit caches van andere apps op ron78nl.github.io op.
 const PREFIX = "rre-";
-const CACHE = PREFIX + "12";   // verhoog het getal bij elke wijziging van de bestanden
+const CACHE = PREFIX + "13";   // verhoog het getal bij elke wijziging van de bestanden
 const BESTANDEN = ["./", "./index.html", "./manifest.json", "./icon-180.png", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", (event) => {
