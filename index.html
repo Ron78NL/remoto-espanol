@@ -494,7 +494,10 @@ footer a { color: var(--muted); }
   var CATS = ["buscar", "latam", "empresa", "tareas", "clases"];
   var html = document.documentElement;
   var lang = "es", filter = "all", estado = {};
-  try { lang = localStorage.getItem("rr-lang") || "es"; } catch (e) {}
+  // Zonder eerdere keuze: Nederlands op een Nederlandstalig toestel, anders Spaans.
+  var toestelTaal = ((navigator.languages && navigator.languages[0]) || navigator.language || "").toLowerCase().indexOf("nl") === 0 ? "nl" : "es";
+  lang = toestelTaal;
+  try { lang = localStorage.getItem("rr-lang") || toestelTaal; } catch (e) {}
   try { filter = localStorage.getItem("rr-filter") || "all"; } catch (e) {}
   // estado per platform: { hecho: bool, oculto: bool }. Lokaal als reserve, gedeelde database als die er is.
   try { estado = JSON.parse(localStorage.getItem("rr-estado") || "{}") || {}; } catch (e) { estado = {}; }
