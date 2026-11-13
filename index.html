@@ -31,16 +31,24 @@
   --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
   --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
   --radius: 10px;
+  /* eigen kleur per rubriek en per tabblad */
+  --c-buscar: #1f5fa8; --c-mundo: #0b7a75; --c-latam: #b02a63; --c-empresa: #6a3fb0; --c-tareas: #3f7d1c; --c-clases: #c25e00;
+  --t-inicio: #b5450f; --t-plataformas: #1f5fa8; --t-autonoma: #3f7d1c; --t-traductor: #6a3fb0;
+  --amber: #e3a018;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #0f1622; --surface: #172131; --ink: #e8edf5; --muted: #9eabc0; --line: #2a374b;
   --accent: #f08a52; --accent-soft: #3a2418;
   --ok: #6fd39a; --ok-soft: #173326; --check: #f0c46a; --check-soft: #3a2f14; --no: #f29191; --no-soft: #3d1c1c;
+  --c-buscar: #6fa8ea; --c-mundo: #4fc3bc; --c-latam: #ec79a8; --c-empresa: #ad8cf0; --c-tareas: #8fcc62; --c-clases: #f2a35a;
+  --t-inicio: #f08a52; --t-plataformas: #6fa8ea; --t-autonoma: #8fcc62; --t-traductor: #ad8cf0; --amber: #f0c46a;
   color-scheme: dark } }
 :root[data-theme="dark"] {
   --bg: #0f1622; --surface: #172131; --ink: #e8edf5; --muted: #9eabc0; --line: #2a374b;
   --accent: #f08a52; --accent-soft: #3a2418;
   --ok: #6fd39a; --ok-soft: #173326; --check: #f0c46a; --check-soft: #3a2f14; --no: #f29191; --no-soft: #3d1c1c;
+  --c-buscar: #6fa8ea; --c-mundo: #4fc3bc; --c-latam: #ec79a8; --c-empresa: #ad8cf0; --c-tareas: #8fcc62; --c-clases: #f2a35a;
+  --t-inicio: #f08a52; --t-plataformas: #6fa8ea; --t-autonoma: #8fcc62; --t-traductor: #ad8cf0; --amber: #f0c46a;
   color-scheme: dark }
 
 * { box-sizing: border-box; }
@@ -92,8 +100,6 @@ header { display: grid; gap: 10px; }
 .progress { font-size: 0.95rem; color: var(--muted); font-variant-numeric: tabular-nums; }
 .legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 0.92rem; color: var(--muted); }
 
-.group { display: grid; gap: 8px; }
-.group h3 { font-size: .9rem; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; font-family: var(--font-body); }
 .quitar { border: 1px solid var(--line); background: transparent; color: var(--muted); font: inherit; font-size: 0.85rem; padding: 4px 10px; border-radius: 999px; cursor: pointer; }
 .quitar:hover { border-color: var(--no); color: var(--no); background: var(--no-soft); }
 .sync { font-size: 0.88rem; color: var(--muted); }
@@ -195,6 +201,43 @@ footer { font-size: 0.88rem; color: var(--muted); display: grid; gap: 8px; borde
 footer ul { margin: 0; padding-left: 1.2em; display: grid; gap: 2px; }
 footer a { color: var(--muted); }
 @media (prefers-reduced-motion: no-preference) { .chip, .go, .word { transition: background .15s, color .15s; } }
+
+/* rubrieken: inklapbaar, elk met eigen kleur */
+.group { --c: var(--muted); border: 1px solid var(--line); border-left: 6px solid var(--c); border-radius: var(--radius); background: var(--surface); }
+.cat-buscar { --c: var(--c-buscar); } .cat-mundo { --c: var(--c-mundo); } .cat-latam { --c: var(--c-latam); }
+.cat-empresa { --c: var(--c-empresa); } .cat-tareas { --c: var(--c-tareas); } .cat-clases { --c: var(--c-clases); }
+.group > summary { cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; padding: 14px 16px; list-style: none; }
+.group > summary::-webkit-details-marker { display: none; }
+.group > summary::after { content: "+"; grid-column: 2; grid-row: 1; font-weight: 700; font-size: 1.3rem; line-height: 1; color: var(--c); }
+.group[open] > summary::after { content: "−"; }
+.cat-title { font-family: var(--font-display); font-weight: 700; font-size: 1.12rem; color: var(--c); }
+.cat-count { grid-column: 1; justify-self: start; font-size: .8rem; font-weight: 700; color: #fff; background: var(--c); padding: 1px 8px; border-radius: 6px; font-variant-numeric: tabular-nums; }
+:root[data-theme="dark"] .cat-count { color: #10161f; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .cat-count { color: #10161f; } }
+.cat-sub { grid-column: 1 / -1; font-size: .88rem; color: var(--muted); }
+.cat-title, .cat-count { display: inline-block; }
+.group > summary { grid-template-areas: "t plus" "n plus" "s s"; }
+.cat-title { grid-area: t; } .cat-count { grid-area: n; } .cat-sub { grid-area: s; }
+.group > summary::after { grid-area: plus; align-self: center; }
+.cat-body { padding: 0 16px 8px; display: grid; gap: 10px; }
+.cat-body .cards { border-top: 1px solid var(--line); }
+.cat-body .card:last-child { border-bottom: 0; }
+.cat-body .note { border-left-color: var(--c); }
+/* tabbladen: eigen kleur per onderwerp */
+#tab-btn-inicio { --t: var(--t-inicio); } #tab-btn-plataformas { --t: var(--t-plataformas); }
+#tab-btn-autonoma { --t: var(--t-autonoma); } #tab-btn-traductor { --t: var(--t-traductor); }
+.tabs button[aria-selected="true"] { color: var(--t); border-bottom-color: var(--t); }
+#tab-inicio { --t: var(--t-inicio); } #tab-plataformas { --t: var(--t-plataformas); } #tab-autonoma { --t: var(--t-autonoma); } #tab-traductor { --t: var(--t-traductor); }
+.panel h2 { color: var(--t); }
+.panel section > h2, .panel .plegable > summary { padding-left: 10px; border-left: 4px solid var(--t); }
+.panel .route li::before { border-color: var(--t); color: var(--t); }
+/* statuslabels steviger */
+.badge.b-ok { background: var(--ok); color: #fff; }
+.badge.b-check { background: var(--amber); color: #2a1a00; }
+.badge.b-no { background: var(--no); color: #fff; }
+:root[data-theme="dark"] .badge.b-ok, :root[data-theme="dark"] .badge.b-no { color: #10161f; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .badge.b-ok, :root:not([data-theme="light"]) .badge.b-no { color: #10161f; } }
+.legend .badge { font-size: .78rem; }
 </style>
 </head>
 <body>
@@ -276,19 +319,10 @@ footer a { color: var(--muted); }
     <span><span class="badge b-no"><span lang="es">Solo viviendo en otro país</span><span lang="nl">Alleen als je elders woont</span></span></span>
   </div>
   <div class="bar">
-    <div class="chips" role="group" aria-label="Filtro">
-      <button type="button" class="chip" id="f-all" data-filter="all" aria-pressed="true"><span lang="es">Todo</span><span lang="nl">Alles</span></button>
-      <button type="button" class="chip" id="f-buscar" data-filter="buscar" aria-pressed="false"><span lang="es">Buscadores</span><span lang="nl">Zoeksites</span></button>
-      <button type="button" class="chip" id="f-mundo" data-filter="mundo" aria-pressed="false"><span lang="es">Todo el mundo</span><span lang="nl">Hele wereld</span></button>
-      <button type="button" class="chip" id="f-latam" data-filter="latam" aria-pressed="false"><span lang="es">España y Latinoamérica</span><span lang="nl">Spanje en Latijns-Amerika</span></button>
-      <button type="button" class="chip" id="f-empresa" data-filter="empresa" aria-pressed="false"><span lang="es">Empresas con contrato</span><span lang="nl">Bedrijven met contract</span></button>
-      <button type="button" class="chip" id="f-tareas" data-filter="tareas" aria-pressed="false"><span lang="es">Freelance y tareas</span><span lang="nl">Freelance en taken</span></button>
-      <button type="button" class="chip" id="f-clases" data-filter="clases" aria-pressed="false"><span lang="es">Clases de español</span><span lang="nl">Spaanse les</span></button>
-    </div>
     <span class="progress" id="progress" aria-live="polite"></span>
   </div>
   <p class="sync" id="sync" data-s="local"></p>
-  <div id="groups" class="group-list" style="display:grid; gap:28px"></div>
+  <div id="groups" class="group-list" style="display:grid; gap:12px"></div>
   <details class="papelera" id="papelera" hidden>
     <summary><span lang="es">Quitadas</span><span lang="nl">Weggehaald</span> (<span id="pap-count">0</span>)</summary>
     <p class="muted"><span lang="es">Estas no te sirvieron. Si cambias de idea, vuelve a ponerlas en la lista.</span><span lang="nl">Deze waren niet nuttig. Van gedachten veranderd? Zet ze terug in de lijst.</span></p>
@@ -492,6 +526,14 @@ footer a { color: var(--muted); }
       en:   { es: "Suele pedir inglés", nl: "Vraagt vaak Engels" },
       auto: { es: "Necesitas estatuto de autónoma", nl: "Statuut zelfstandige nodig" },
       contrato: { es: "Contrato de empleada", nl: "Contract als werknemer" }
+    },
+    catCorto: {
+      buscar:  { es: "Buscadores", nl: "Zoeksites" },
+      mundo:   { es: "Todo el mundo", nl: "Hele wereld" },
+      latam:   { es: "España y Latinoamérica", nl: "Spanje en Latijns-Amerika" },
+      empresa: { es: "Empresas con contrato", nl: "Bedrijven met contract" },
+      tareas:  { es: "Freelance y tareas", nl: "Freelance en taken" },
+      clases:  { es: "Clases de español", nl: "Spaanse les" }
     },
     cat: {
       buscar:  { es: "Buscadores con la búsqueda ya preparada", nl: "Zoeksites met klaargezette zoekopdracht" },
@@ -858,6 +900,10 @@ footer a { color: var(--muted); }
     }).join("") + '</ul>';
   }
 
+  var abiertas = {};
+  document.addEventListener("toggle", function (e) {
+    var d = e.target; if (d && d.getAttribute && d.getAttribute("data-cat")) abiertas[d.getAttribute("data-cat")] = d.open;
+  }, true);
   function render() {
     renderResumen();
     var out = "";
@@ -865,7 +911,10 @@ footer a { color: var(--muted); }
       if (filter !== "all" && filter !== c) return;
       var items = P.filter(function (p) { return p.cat === c && !oculto(p.id); });
       if (!items.length) return;
-      out +='<div class="group"><h3>' + bi(T.cat[c]) + '</h3>' + (T.note[c] ? '<p class="note">' + bi(T.note[c]) + '</p>' : '') + '<div class="cards">';
+      out += '<details class="group cat-' + c + '" data-cat="' + c + '"' + (abiertas[c] ? ' open' : '') + '><summary>' +
+        '<span class="cat-title">' + bi(T.catCorto[c]) + '</span><span class="cat-count">' + items.length + '</span>' +
+        '<span class="cat-sub">' + bi(T.cat[c]) + '</span></summary>' +
+        '<div class="cat-body">' + (T.note[c] ? '<p class="note">' + bi(T.note[c]) + '</p>' : '') + '<div class="cards">';
       items.forEach(function (p) {
         var isDone = !!st(p.id).hecho;
         var badges = '<span class="badge b-' + p.fit + '">' + bi(T.fit[p.fit]) + '</span>';
@@ -883,7 +932,7 @@ footer a { color: var(--muted); }
           (p.links.length ? '<label class="tick"><input type="checkbox" id="done-' + p.id + '" data-done="' + p.id + '"' + (isDone ? ' checked' : '') + '>' + bi(T.done) + '</label>' : '') +
           '</div>' + seguimientoHtml(p) + '</article>';
       });
-      out += '</div></div>';
+      out += '</div></div></details>';
     });
     if (!out) out = '<p class="muted">' + bi(T.vacio) + '</p>';
     document.getElementById("groups").innerHTML = out;
@@ -952,7 +1001,7 @@ footer a { color: var(--muted); }
 
   document.getElementById("words").innerHTML = WORDS.map(function (w) { return '<button type="button" class="word" data-word="' + esc(w) + '">' + esc(w) + '</button>'; }).join("");
   setLang(lang === "nl" ? "nl" : "es");
-  setFilter(filter === "all" || CATS.indexOf(filter) > -1 ? filter : "all");
+  setFilter("all");
   listo = true;
   function setTab(t, desdeClick) {
     var TABS = ["inicio", "plataformas", "autonoma", "traductor"];
