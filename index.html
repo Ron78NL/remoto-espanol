@@ -68,7 +68,7 @@ header { display: grid; gap: 14px; }
 .lead { font-size: 1.12rem; color: var(--muted); }
 
 /* kern */
-.keys { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.keys { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 .key { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; display: grid; gap: 8px; align-content: start; }
 .key strong { font-family: var(--font-display); font-size: 1.05rem; }
 .key.warn { background: var(--accent-soft); border-color: transparent; }
@@ -187,6 +187,10 @@ footer a { color: var(--muted); }
       <strong><span lang="es">Con solo español, lo más rápido es freelance</span><span lang="nl">Met alleen Spaans gaat freelance het snelst</span></strong>
       <p><span lang="es">Clases de español online, tareas para inteligencia artificial, transcripción y asistente virtual para clientes hispanos. Para cobrar en Bélgica necesitas el estatuto de autónoma (ver abajo).</span><span lang="nl">Online Spaanse les, taken voor AI-bedrijven, transcriptie en virtueel assistent voor Spaanstalige klanten. Om in België te factureren is het statuut van zelfstandige nodig (zie onderaan).</span></p>
     </div>
+    <div class="key">
+      <strong><span lang="es">Hablas neerlandés: busca trabajo por teléfono</span><span lang="nl">Ze spreekt Nederlands: kies telefoonwerk</span></strong>
+      <p><span lang="es">Español y neerlandés hablado juntos son una ventaja en Bélgica. Elige puestos de <b>atención telefónica</b>, donde casi no hay que escribir en neerlandés. Y habla con tu consultora de <b>Adecco</b>: ya te conocen.</span><span lang="nl">Spaans plus gesproken Nederlands is in België een troef. Kies <b>telefonische klantendienst</b>, waar ze weinig Nederlands moet schrijven. En spreek haar consulent bij <b>Adecco</b> aan: die kent haar al.</span></p>
+    </div>
     <div class="key warn">
       <strong><span lang="es">Nunca pagues por un trabajo</span><span lang="nl">Betaal nooit voor een job</span></strong>
       <p><span lang="es">Ni por formación, ni por equipo, ni por un "depósito". Una empresa seria te paga a ti, no al revés.</span><span lang="nl">Niet voor opleiding, materiaal of een "waarborg". Een echte werkgever betaalt jou, niet omgekeerd.</span></p>
@@ -283,8 +287,8 @@ footer a { color: var(--muted); }
       </ul>
     </div>
     <div class="box">
-      <h3><span lang="es">Lo que más puertas abre</span><span lang="nl">Wat de meeste deuren opent</span></h3>
-      <p><span lang="es">Casi todos los empleos de atención al cliente en Bélgica piden español <b>más</b> otro idioma. Un poco de inglés o neerlandés ya multiplica las ofertas. En Flandes hay cursos de neerlandés baratos para adultos (pregunta en el Huis van het Nederlands o en la VDAB).</span><span lang="nl">Bijna alle klantendienstjobs in België vragen Spaans <b>plus</b> een andere taal. Een beetje Engels of Nederlands vergroot het aanbod sterk. In Vlaanderen zijn er goedkope cursussen Nederlands voor volwassenen (vraag bij het Huis van het Nederlands of de VDAB).</span></p>
+      <h3><span lang="es">Español + neerlandés hablado</span><span lang="nl">Spaans + gesproken Nederlands</span></h3>
+      <p><span lang="es">En Bélgica casi todos los empleos de atención al cliente piden dos idiomas, y tú ya hablas dos. Busca con palabras como <b>Spaans</b>, <b>klantendienst</b> y <b>telefonisch</b>. Ofertas con español y neerlandés son pocas, así que actívate pronto cuando salga una. Para escribir mejor en neerlandés hay cursos baratos para adultos (Huis van het Nederlands, VDAB o un CVO).</span><span lang="nl">In België vragen bijna alle klantendienstjobs twee talen, en die heeft ze. Zoek met woorden als <b>Spaans</b>, <b>klantendienst</b> en <b>telefonisch</b>. Vacatures met Spaans én Nederlands zijn schaars, dus reageer snel als er een verschijnt. Om beter Nederlands te schrijven zijn er goedkope cursussen voor volwassenen (Huis van het Nederlands, VDAB of een CVO).</span></p>
     </div>
   </div>
 </section>
@@ -381,7 +385,7 @@ footer a { color: var(--muted); }
     { id: "vdab", cat: "buscar", name: "VDAB", fit: "ok", tags: [],
       es: "El servicio público de empleo de Flandes. Ofertas belgas con español; a veces con días de teletrabajo.",
       nl: "De Vlaamse dienst voor arbeidsbemiddeling. Belgische vacatures met Spaans, soms met thuiswerkdagen.",
-      links: [ { url: "https://www.vdab.be/vindeenjob/vacatures?trefwoord=spaans" } ] },
+      links: [ { es: "Español", nl: "Spaans", url: "https://www.vdab.be/vindeenjob/vacatures?trefwoord=spaans" }, { es: "Español + atención al cliente", nl: "Spaans + klantendienst", url: "https://www.vdab.be/vindeenjob/vacatures?trefwoord=spaans%20klantendienst" } ] },
     { id: "jooble", cat: "buscar", name: "Jooble Bélgica", fit: "ok", tags: [],
       es: "Junta ofertas de muchas webs belgas con «Spaans» en un solo listado.",
       nl: "Verzamelt vacatures met «Spaans» van veel Belgische sites in één lijst.",
@@ -434,6 +438,14 @@ footer a { color: var(--muted); }
       links: [ { url: "https://apply.workable.com/supportyourapp/" } ] },
 
     // empresas
+    { id: "adecco", cat: "empresa", name: "Adecco (tu agencia)", fit: "ok", tags: ["contrato"],
+      es: "Ya trabajas con Adecco. Pide a tu consultora puestos de atención al cliente o ventas donde sirvan el español y el neerlandés hablado. Adecco publicó antes un puesto de atención al cliente con español en Flandes Oriental (oficina de selección West: 051 66 11 20).",
+      nl: "Ze werkt al via Adecco. Vraag haar consulent naar klantendienst- of verkoopjobs waar Spaans en gesproken Nederlands van pas komen. Adecco had eerder een klantendienstjob met Spaans in Oost-Vlaanderen (selectiekantoor West: 051 66 11 20).",
+      links: [ { url: "https://www.adecco.be" } ] },
+    { id: "randstad-wvl", cat: "empresa", name: "Randstad West-Vlaanderen", fit: "check", tags: ["contrato"],
+      es: "Lista de trabajos de atención al cliente y call center en Flandes Occidental. Mira en cada oferta si sirve el español.",
+      nl: "Lijst van klantendienst- en callcenterjobs in West-Vlaanderen. Kijk per vacature of Spaans een plus is.",
+      links: [ { url: "https://www.randstad.com/jobs/belgium/s-customer-service-call-center/west-vlaanderen/" } ] },
     { id: "tp", cat: "empresa", name: "Teleperformance (TP)", fit: "check", tags: ["contrato"],
       es: "La mayor empresa de atención al cliente. Tiene puestos en español desde casa, pero cada país contrata a sus propios residentes (Alemania, España…).",
       nl: "Het grootste klantendienstbedrijf. Heeft Spaanstalige thuiswerkjobs, maar elk land neemt zijn eigen inwoners aan (Duitsland, Spanje…).",
@@ -519,7 +531,7 @@ footer a { color: var(--muted); }
   var WORDS = [
     "Spanish speaking", "Spanish customer support", "remote Belgium", "remote EU", "anywhere in Europe",
     "atención al cliente", "teletrabajo", "soporte chat", "backoffice español", "asistente virtual",
-    "Spaans thuiswerk", "Spaanstalig",
+    "Spaans thuiswerk", "Spaanstalig", "Spaans klantendienst", "telefonisch", "Spaans Nederlands",
     "remote worldwide", "contractor", "100% remoto", "desde cualquier país", "LATAM remote"
   ];
 
