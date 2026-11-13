@@ -105,6 +105,17 @@ header { display: grid; gap: 14px; }
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 10px 12px 10px 16px; border-radius: 10px; display: flex; gap: 14px; align-items: center; max-width: calc(100% - 32px); z-index: 20; box-shadow: 0 6px 24px rgba(0,0,0,.25); }
 .toast[hidden] { display: none; }
 .toast button { background: transparent; color: var(--bg); border: 1px solid currentColor; font: inherit; font-weight: 700; padding: 5px 12px; border-radius: 8px; cursor: pointer; white-space: nowrap; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; border-bottom: 2px solid var(--line); margin-top: -20px; }
+.tabs button { font: inherit; font-weight: 700; font-size: 1rem; border: 0; background: transparent; color: var(--muted); padding: 10px 14px; border-bottom: 3px solid transparent; margin-bottom: -2px; cursor: pointer; }
+.tabs button[aria-selected="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+.panel { display: grid; gap: 44px; }
+.panel[hidden] { display: none; }
+.tabla-wrap { overflow-x: auto; }
+.tabla { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); font-size: .97rem; }
+.tabla th, .tabla td { text-align: left; padding: 10px 12px; border-top: 1px solid var(--line); vertical-align: top; }
+.tabla thead th { border-top: 0; color: var(--muted); font-size: .85rem; text-transform: uppercase; letter-spacing: .05em; }
+.tabla td.num { font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 700; }
+.links { display: flex; flex-wrap: wrap; gap: 8px; }
 .note { font-size: 0.95rem; background: var(--check-soft); border-radius: var(--radius); padding: 12px 14px; }
 .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 @media (max-width: 680px) { .cards { grid-template-columns: 1fr; } }
@@ -172,9 +183,16 @@ footer a { color: var(--muted); }
       <button type="button" id="btn-nl" data-set-lang="nl" aria-pressed="false">Nederlands</button>
     </div>
   </div>
-  <h1><span lang="es">Trabajo remoto en español, desde casa en Bélgica</span><span lang="nl">Remote werk in het Spaans, thuis vanuit België</span></h1>
+  <h1><span lang="es">Trabajo en español desde casa, para empresas de todo el mundo</span><span lang="nl">Werk in het Spaans van thuis uit, voor bedrijven over de hele wereld</span></h1>
   <p class="lead"><span lang="es">Todas las plataformas en un solo sitio, con una etiqueta que te dice si de verdad puedes trabajar ahí viviendo en Bélgica. Marca las que ya probaste.</span><span lang="nl">Alle platformen op één plek, met een label dat zegt of het echt kan terwijl je in België woont. Vink aan wat je al geprobeerd hebt.</span></p>
 </header>
+
+<nav class="tabs" role="tablist" aria-label="Secciones">
+  <button type="button" role="tab" id="tab-btn-ofertas" data-tab="ofertas" aria-selected="true" aria-controls="tab-ofertas"><span lang="es">Buscar trabajo</span><span lang="nl">Werk zoeken</span></button>
+  <button type="button" role="tab" id="tab-btn-autonoma" data-tab="autonoma" aria-selected="false" aria-controls="tab-autonoma"><span lang="es">Trabajar como autónoma</span><span lang="nl">Werken als zelfstandige</span></button>
+</nav>
+
+<div class="panel" id="tab-ofertas" role="tabpanel" aria-labelledby="tab-btn-ofertas">
 
 <section aria-labelledby="h-keys">
   <h2 id="h-keys"><span lang="es">Lo esencial</span><span lang="nl">De kern</span></h2>
@@ -228,6 +246,7 @@ footer a { color: var(--muted); }
     <div class="chips" role="group" aria-label="Filtro">
       <button type="button" class="chip" id="f-all" data-filter="all" aria-pressed="true"><span lang="es">Todo</span><span lang="nl">Alles</span></button>
       <button type="button" class="chip" id="f-buscar" data-filter="buscar" aria-pressed="false"><span lang="es">Buscadores</span><span lang="nl">Zoeksites</span></button>
+      <button type="button" class="chip" id="f-mundo" data-filter="mundo" aria-pressed="false"><span lang="es">Todo el mundo</span><span lang="nl">Hele wereld</span></button>
       <button type="button" class="chip" id="f-latam" data-filter="latam" aria-pressed="false"><span lang="es">España y Latinoamérica</span><span lang="nl">Spanje en Latijns-Amerika</span></button>
       <button type="button" class="chip" id="f-empresa" data-filter="empresa" aria-pressed="false"><span lang="es">Empresas con contrato</span><span lang="nl">Bedrijven met contract</span></button>
       <button type="button" class="chip" id="f-tareas" data-filter="tareas" aria-pressed="false"><span lang="es">Freelance y tareas</span><span lang="nl">Freelance en taken</span></button>
@@ -255,6 +274,7 @@ footer a { color: var(--muted); }
   <div class="two">
     <div class="box">
       <h3><span lang="es">Autónoma (zelfstandige)</span><span lang="nl">Zelfstandige</span></h3>
+      <p><button type="button" class="volver" data-tab="autonoma"><span lang="es">Toda la explicación en «Trabajar como autónoma»</span><span lang="nl">Volledige uitleg bij «Werken als zelfstandige»</span></button></p>
       <ul>
         <li><span lang="es"><b>Complementaria (bijberoep)</b>: solo si además trabajas como empleada al menos a media jornada.</span><span lang="nl"><b>Bijberoep</b>: alleen als je daarnaast minstens halftijds werknemer bent.</span></li>
         <li><span lang="es"><b>Principal (hoofdberoep)</b>: si no tienes otro trabajo. Las cuotas sociales son más altas.</span><span lang="nl"><b>Hoofdberoep</b>: als je geen ander werk hebt. De sociale bijdragen zijn hoger.</span></li>
@@ -292,6 +312,116 @@ footer a { color: var(--muted); }
     </div>
   </div>
 </section>
+
+</div>
+
+<div class="panel" id="tab-autonoma" role="tabpanel" aria-labelledby="tab-btn-autonoma" hidden>
+
+<section aria-labelledby="h-aut">
+  <h2 id="h-aut"><span lang="es">Autónoma complementaria: trabaja para empresas de todo el mundo</span><span lang="nl">Zelfstandige in bijberoep: werken voor bedrijven over de hele wereld</span></h2>
+  <p class="lead"><span lang="es">Sigues como empleada (ahora con Adecco) y además trabajas desde casa para empresas de España, Latinoamérica o cualquier otro país. Cada mes les mandas una factura. Ellas no tienen que hacer ningún trámite en Bélgica. En Bélgica esto se llama <b>zelfstandige in bijberoep</b>.</span><span lang="nl">Ze blijft werknemer (nu via Adecco) en werkt daarnaast van thuis uit voor bedrijven in Spanje, Latijns-Amerika of eender welk ander land. Elke maand stuurt ze hen een factuur. Die bedrijven hoeven niets te regelen in België. Dit heet <b>zelfstandige in bijberoep</b>.</span></p>
+</section>
+
+<section aria-labelledby="h-aut-puedo">
+  <h2 id="h-aut-puedo"><span lang="es">¿Puedo hacerlo?</span><span lang="nl">Mag het?</span></h2>
+  <div class="two">
+    <div class="box">
+      <h3><span lang="es">Condiciones</span><span lang="nl">Voorwaarden</span></h3>
+      <ul>
+        <li><span lang="es">Trabajas como empleada <b>al menos a media jornada</b> (unas 19 horas por semana si la jornada completa es de 38 horas).</span><span lang="nl">Ze werkt als werknemer <b>minstens halftijds</b> (ongeveer 19 uur per week als voltijds 38 uur is).</span></li>
+        <li><span lang="es">No necesitas un diploma especial para atención al cliente, traducción o clases.</span><span lang="nl">Voor klantendienst, vertaalwerk of les geven is geen speciaal diploma nodig.</span></li>
+        <li><span lang="es">Mira en tu contrato que no haya una cláusula que prohíba otro trabajo.</span><span lang="nl">Kijk in het contract of er geen clausule staat die ander werk verbiedt.</span></li>
+      </ul>
+    </div>
+    <div class="box alarm">
+      <h3><span lang="es">Ojo con el trabajo interim (Adecco)</span><span lang="nl">Let op bij interimwerk (Adecco)</span></h3>
+      <p><span lang="es">Con contratos interim necesitas <b>al menos 235 horas por trimestre</b>, y tener contrato <b>el primer y el último día</b> de cada trimestre. Si no llegas, cuentas como autónoma principal (hoofdberoep), que es más caro. Pregunta a tu caja de seguro social antes de empezar.</span><span lang="nl">Bij interimcontracten moet ze <b>minstens 235 uur per kwartaal</b> werken, en een contract hebben op <b>de eerste en de laatste dag</b> van elk kwartaal. Lukt dat niet, dan geldt ze als zelfstandige in hoofdberoep, en dat is duurder. Vraag het na bij het sociaal verzekeringsfonds vóór ze start.</span></p>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="h-aut-pasos">
+  <h2 id="h-aut-pasos"><span lang="es">Pasos para empezar</span><span lang="nl">Stappen om te starten</span></h2>
+  <ol class="route">
+    <li><div class="txt"><h3><span lang="es">Elige una caja de seguro social</span><span lang="nl">Kies een sociaal verzekeringsfonds</span></h3>
+      <p class="muted"><span lang="es">Por ejemplo Partena, Liantis, Acerta, Xerius o Securex. Te aconsejan gratis y cobran tus cotizaciones. Pregunta por las 235 horas del interim.</span><span lang="nl">Bijvoorbeeld Partena, Liantis, Acerta, Xerius of Securex. Ze geven gratis advies en innen de sociale bijdragen. Vraag naar de 235 uur bij interim.</span></p></div></li>
+    <li><div class="txt"><h3><span lang="es">Pide tu número de empresa</span><span lang="nl">Vraag een ondernemingsnummer aan</span></h3>
+      <p class="muted"><span lang="es">En una ventanilla de empresas (ondernemingsloket). Cuesta unos 111,50 € (2026). Di qué harás: atención al cliente, asistencia virtual, traducción…</span><span lang="nl">Bij een ondernemingsloket. Kost ongeveer € 111,50 (2026). Zeg welke activiteit: klantendienst, virtuele assistentie, vertaling…</span></p></div></li>
+    <li><div class="txt"><h3><span lang="es">Activa tu número de IVA (btw)</span><span lang="nl">Activeer het btw-nummer</span></h3>
+      <p class="muted"><span lang="es">Si facturas menos de 25.000 € al año, pide la <b>franquicia para pequeñas empresas</b>: no cobras IVA y casi no tienes papeleo de IVA. Algunas ventanillas cobran unos 70–80 € por activarlo.</span><span lang="nl">Factureert ze minder dan € 25.000 per jaar, vraag dan de <b>btw-vrijstellingsregeling voor kleine ondernemingen</b>: geen btw aanrekenen en bijna geen btw-papierwerk. Sommige loketten rekenen € 70–80 voor de activatie.</span></p></div></li>
+    <li><div class="txt"><h3><span lang="es">Abre una cuenta bancaria aparte</span><span lang="nl">Open een aparte bankrekening</span></h3>
+      <p class="muted"><span lang="es">Así separas el dinero de tu actividad. Para cobrar de otros países sirve también Wise.</span><span lang="nl">Zo blijft het geld van de activiteit apart. Voor betalingen uit het buitenland kan ook Wise.</span></p></div></li>
+    <li><div class="txt"><h3><span lang="es">Firma un contrato y manda tu primera factura</span><span lang="nl">Teken een contract en stuur de eerste factuur</span></h3>
+      <p class="muted"><span lang="es">Un contrato de prestación de servicios con tu cliente: qué haces, cuántas horas más o menos, tarifa por hora y cuándo pagan.</span><span lang="nl">Een dienstverleningscontract met de klant: wat ze doet, ongeveer hoeveel uur, uurtarief en wanneer ze betalen.</span></p></div></li>
+  </ol>
+</section>
+
+<section aria-labelledby="h-aut-coste">
+  <h2 id="h-aut-coste"><span lang="es">¿Cuánto cuesta?</span><span lang="nl">Wat kost het?</span></h2>
+  <div class="tabla-wrap"><table class="tabla">
+    <thead><tr><th><span lang="es">Concepto</span><span lang="nl">Wat</span></th><th><span lang="es">Importe (2026)</span><span lang="nl">Bedrag (2026)</span></th></tr></thead>
+    <tbody>
+      <tr><td><span lang="es">Número de empresa (una vez)</span><span lang="nl">Ondernemingsnummer (eenmalig)</span></td><td class="num">± 111,50 €</td></tr>
+      <tr><td><span lang="es">Activar IVA en la ventanilla (una vez)</span><span lang="nl">Btw activeren via het loket (eenmalig)</span></td><td class="num">± 70–80 €</td></tr>
+      <tr><td><span lang="es">Cotizaciones sociales si tu beneficio es menor de 1.922,16 € al año</span><span lang="nl">Sociale bijdragen bij een winst onder € 1.922,16 per jaar</span></td><td class="num">0 €</td></tr>
+      <tr><td><span lang="es">Cotizaciones sociales por encima de ese importe</span><span lang="nl">Sociale bijdragen boven dat bedrag</span></td><td class="num"><span lang="es">± 20,5 % del beneficio</span><span lang="nl">± 20,5 % van de winst</span></td></tr>
+      <tr><td><span lang="es">Impuesto sobre la renta</span><span lang="nl">Personenbelasting</span></td><td><span lang="es">se suma a tu sueldo</span><span lang="nl">telt op bij het loon</span></td></tr>
+    </tbody>
+  </table></div>
+  <div class="note">
+    <p><span lang="es"><b>Ejemplo:</b> facturas 600 € al mes a una empresa de España = 7.200 € al año. Con 500 € de gastos (internet, auriculares, parte del ordenador) tu beneficio es 6.700 €. Cotizaciones: unos 1.370 € al año, unos 343 € por trimestre. Después viene el impuesto, que depende de tu sueldo total. Es un cálculo aproximado.</span><span lang="nl"><b>Voorbeeld:</b> ze factureert € 600 per maand aan een Spaans bedrijf = € 7.200 per jaar. Met € 500 kosten (internet, headset, deel van de computer) is de winst € 6.700. Sociale bijdragen: ongeveer € 1.370 per jaar, zo'n € 343 per kwartaal. Daarna komt de belasting, die afhangt van het totale inkomen. Dit is een ruwe schatting.</span></p>
+  </div>
+</section>
+
+<section aria-labelledby="h-aut-iva">
+  <h2 id="h-aut-iva"><span lang="es">Clientes en otros países: el IVA</span><span lang="nl">Klanten in het buitenland: de btw</span></h2>
+  <div class="two">
+    <div class="box">
+      <h3><span lang="es">Empresa en la Unión Europea (España, Portugal…)</span><span lang="nl">Bedrijf in de Europese Unie (Spanje, Portugal…)</span></h3>
+      <p><span lang="es">No cobras IVA belga. En la factura pones el número de IVA de la empresa (en España empieza por <b>ES</b>) y la frase «Autoliquidación – inversión del sujeto pasivo». Pregunta a tu caja o a una contable si además tienes que presentar el listado intracomunitario.</span><span lang="nl">Geen Belgische btw. Op de factuur komen het btw-nummer van het bedrijf (in Spanje begint dat met <b>ES</b>) en de vermelding «Btw verlegd – autoliquidación». Vraag aan het fonds of een boekhouder of ze ook de intracommunautaire opgave moet indienen.</span></p>
+    </div>
+    <div class="box">
+      <h3><span lang="es">Empresa fuera de la UE (Latinoamérica, EE. UU.…)</span><span lang="nl">Bedrijf buiten de EU (Latijns-Amerika, VS…)</span></h3>
+      <p><span lang="es">Tampoco cobras IVA belga cuando el cliente es una empresa. En la factura pones «Servicio no sujeto a IVA belga». Te pagan por transferencia internacional, PayPal, Payoneer o Wise. Mira la comisión y el cambio de moneda.</span><span lang="nl">Ook geen Belgische btw als de klant een bedrijf is. Op de factuur komt «Dienst niet onderworpen aan Belgische btw». Betaling via internationale overschrijving, PayPal, Payoneer of Wise. Let op kosten en wisselkoers.</span></p>
+    </div>
+    <div class="box">
+      <h3><span lang="es">Qué pone una factura</span><span lang="nl">Wat er op een factuur staat</span></h3>
+      <ul>
+        <li><span lang="es">Tu nombre, dirección y número de empresa/IVA</span><span lang="nl">Naam, adres en ondernemings-/btw-nummer</span></li>
+        <li><span lang="es">Nombre, dirección y número de IVA del cliente</span><span lang="nl">Naam, adres en btw-nummer van de klant</span></li>
+        <li><span lang="es">Número de factura (1, 2, 3…) y fecha</span><span lang="nl">Factuurnummer (1, 2, 3…) en datum</span></li>
+        <li><span lang="es">Qué hiciste, horas y precio por hora</span><span lang="nl">Wat ze deed, aantal uren en uurtarief</span></li>
+        <li><span lang="es">Total y la frase sobre el IVA</span><span lang="nl">Totaal en de vermelding over btw</span></li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3><span lang="es">Ser autónoma de verdad</span><span lang="nl">Echt zelfstandig zijn</span></h3>
+      <p><span lang="es">Tú decides cómo organizas tu trabajo. Mejor tener más de un cliente. Si una empresa te pone horario fijo, jefe y te trata como empleada, eso es un «falso autónomo» y no está permitido.</span><span lang="nl">Zij beslist hoe ze haar werk organiseert. Liefst meer dan één klant. Legt een bedrijf vaste uren en een baas op en behandelt het haar als werknemer, dan is dat schijnzelfstandigheid, en dat mag niet.</span></p>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="h-aut-msg">
+  <h2 id="h-aut-msg"><span lang="es">Mensaje para una empresa</span><span lang="nl">Bericht voor een bedrijf</span></h2>
+  <p class="muted"><span lang="es">Cuando una empresa dice «solo residentes en España» o «solo Latinoamérica», manda este mensaje. Toca el botón para copiarlo.</span><span lang="nl">Zegt een bedrijf «enkel inwoners van Spanje» of «enkel Latijns-Amerika», stuur dan dit bericht (in het Spaans). Tik op de knop om het te kopiëren.</span></p>
+  <div class="box">
+    <p id="msg-empresa">Hola: vivo en Bélgica y trabajo como autónoma registrada. Puedo trabajar con vosotros en remoto como proveedora externa: cada mes os envío una factura y no tenéis que hacer ningún trámite laboral ni contratarme. Dentro de la Unión Europea la factura va sin IVA (inversión del sujeto pasivo). Hablo español nativo y neerlandés, y tengo más de 14 años de experiencia en ventas y atención al cliente. ¿Os interesa hablarlo?</p>
+    <div><button type="button" class="go" id="copiar-msg"><span lang="es">Copiar mensaje</span><span lang="nl">Bericht kopiëren</span></button></div>
+  </div>
+</section>
+
+<section aria-labelledby="h-aut-ayuda">
+  <h2 id="h-aut-ayuda"><span lang="es">Quién te ayuda gratis</span><span lang="nl">Wie helpt gratis</span></h2>
+  <div class="links">
+    <a class="go alt" href="https://www.vlaio.be/nl/begeleiding-advies/start/ondernemen-bijberoep/voorwaarden-om-te-starten-bijberoep" target="_blank" rel="noopener">VLAIO: <span lang="es">condiciones</span><span lang="nl">voorwaarden</span></a>
+    <a class="go alt" href="https://www.vlaanderen.be/economie-en-ondernemen/een-eigen-zaak-starten/starten-met-een-onderneming/zelfstandige-in-bijberoep" target="_blank" rel="noopener">Vlaanderen.be</a>
+    <a class="go alt" href="https://www.vlaio.be/nl/nieuws/nieuwe-regeling-btw-vrijstelling-kleine-ondernemingen" target="_blank" rel="noopener">VLAIO: <span lang="es">franquicia de IVA</span><span lang="nl">btw-vrijstelling</span></a>
+    <a class="go alt" href="https://www.unizo.be/ondernemersgids/financieel/sociaal-statuut/welke-bijdragen-betalen" target="_blank" rel="noopener">Unizo: <span lang="es">cotizaciones</span><span lang="nl">bijdragen</span></a>
+  </div>
+  <p class="muted" style="font-size:.9rem"><span lang="es">Esto es una explicación, no un consejo legal. Cifras de 2026 según VLAIO, Unizo, Accountable y la Cámara belga. Confírmalas siempre con tu caja de seguro social.</span><span lang="nl">Dit is uitleg, geen juridisch advies. Bedragen van 2026 volgens VLAIO, Unizo, Accountable en de Kamer. Laat ze altijd bevestigen door het sociaal verzekeringsfonds.</span></p>
+</section>
+
+</div>
 
 <footer>
   <p><span lang="es">Investigado el 13 de noviembre de 2026. Las ofertas cambian cada semana: abre siempre la oferta original y comprueba país, sueldo y tipo de contrato.</span><span lang="nl">Opgezocht op 13 november 2026. Vacatures veranderen elke week: open altijd de originele vacature en controleer land, loon en type contract.</span></p>
@@ -337,12 +467,15 @@ footer a { color: var(--muted); }
     },
     cat: {
       buscar:  { es: "Buscadores con la búsqueda ya preparada", nl: "Zoeksites met klaargezette zoekopdracht" },
+      mundo:   { es: "Todo el mundo: empleos «desde cualquier país»", nl: "Hele wereld: jobs «vanuit eender welk land»" },
       latam:   { es: "Empresas de España y Latinoamérica (como contractor)", nl: "Bedrijven in Spanje en Latijns-Amerika (als contractor)" },
       empresa: { es: "Empresas de atención al cliente", nl: "Klantendienstbedrijven" },
       tareas:  { es: "Freelance y tareas online", nl: "Freelance en online taken" },
       clases:  { es: "Dar clases de español online", nl: "Online Spaanse les geven" }
     },
     note: {
+      mundo: { es: "Estas webs reúnen empleos marcados como «Anywhere», «Worldwide» o «Remote (Global)». Casi siempre son como contractor: trabajas como autónoma y facturas (mira la pestaña «Trabajar como autónoma»). Muchas piden también algo de inglés. Horario: una empresa de EE. UU. trabaja por la tarde y noche en Bélgica; una de Asia, por la mañana.",
+               nl: "Deze sites verzamelen jobs met «Anywhere», «Worldwide» of «Remote (Global)». Bijna altijd als contractor: ze werkt als zelfstandige en factureert (zie het tabblad «Werken als zelfstandige»). Veel vragen ook wat Engels. Uren: een Amerikaans bedrijf werkt in de Belgische namiddag en avond, een Aziatisch in de voormiddag." },
       latam: { es: "Horario: las 9:00–18:00 en Colombia o México son las 15:00–01:00 en Bélgica (en invierno). Muchas empresas latinoamericanas piden trabajar en su horario, así que es trabajo de tarde y noche. Los sueldos suelen ser más bajos que en Europa: en Torre vimos 600–1.200 US$ al mes.",
                nl: "Uurrooster: 9:00–18:00 in Colombia of Mexico is 15:00–01:00 in België (in de winter). Veel Latijns-Amerikaanse bedrijven willen dat je in hun uren werkt, dus het is namiddag- en avondwerk. De lonen liggen meestal lager dan in Europa: op Torre zagen we 600–1.200 US$ per maand." }
     },
@@ -406,6 +539,32 @@ footer a { color: var(--muted); }
       es: "Muchísimo teletrabajo en atención al cliente, pero casi siempre para quien vive en España. Útil para ver qué empresas contratan.",
       nl: "Heel veel thuiswerk in klantendienst, maar bijna altijd voor wie in Spanje woont. Handig om te zien welke bedrijven aannemen.",
       links: [ { url: "https://es.indeed.com/Ofertas-de-Teletrabajo-atenci%C3%B3n-al-cliente-en-Remote" } ] },
+
+    // hele wereld
+    { id: "rwfa", cat: "mundo", name: "Real Work From Anywhere", fit: "ok", tags: ["auto", "en"],
+      es: "Solo publica empleos que de verdad se pueden hacer desde cualquier país. Busca «Spanish» o «customer support».",
+      nl: "Plaatst enkel jobs die echt vanuit elk land kunnen. Zoek op «Spanish» of «customer support».",
+      links: [ { url: "https://www.realworkfromanywhere.com" } ] },
+    { id: "remoteok", cat: "mundo", name: "Remote OK", fit: "check", tags: ["auto", "en"],
+      es: "Gran bolsa de empleo remoto con lista de trabajos en español. Mira la etiqueta de país: elige las que dicen «Worldwide».",
+      nl: "Grote remote jobsite met een lijst Spaanstalige jobs. Kijk naar het landlabel: kies «Worldwide».",
+      links: [ { url: "https://remoteok.com/remote-spanish-jobs" } ] },
+    { id: "remowork-global", cat: "mundo", name: "Remowork (global)", fit: "check", tags: ["auto"],
+      es: "Cientos de empleos remotos que piden español. Muchos son «Remote (Global)», sobre todo de IA y soporte.",
+      nl: "Honderden remote jobs waarvoor Spaans nodig is. Veel zijn «Remote (Global)», vooral AI- en supportwerk.",
+      links: [ { url: "https://remowork.life/jobs?skills=spanish" } ] },
+    { id: "dynamite", cat: "mundo", name: "Dynamite Jobs", fit: "check", tags: ["auto", "en"],
+      es: "Empleos remotos en empresas pequeñas, con una sección de trabajos en español. Muchos aceptan cualquier país.",
+      nl: "Remote jobs bij kleinere bedrijven, met een rubriek Spaanstalige jobs. Veel staan open voor elk land.",
+      links: [ { url: "https://dynamitejobs.com/skill/remote-spanish-language-jobs" } ] },
+    { id: "elj-remote", cat: "mundo", name: "Europe Language Jobs (remoto)", fit: "check", tags: [],
+      es: "Solo los empleos remotos para hispanohablantes. Revisa en cada uno desde qué países se puede trabajar.",
+      nl: "Enkel de remote jobs voor Spaanstaligen. Kijk per job vanuit welke landen het kan.",
+      links: [ { url: "https://www.europelanguagejobs.com/jobs-in-Remote-for-Spanish-speakers" } ] },
+    { id: "modsquad", cat: "mundo", name: "ModSquad", fit: "check", tags: ["auto", "en"],
+      es: "Empresa de soporte que contrata «Mods» bilingües español-inglés como contractors, a veces desde cualquier país.",
+      nl: "Supportbedrijf dat tweetalige «Mods» Spaans-Engels inhuurt als contractor, soms vanuit elk land.",
+      links: [ { url: "https://modsquad.com" } ] },
 
     // españa y latinoamérica
     { id: "getonbrd", cat: "latam", name: "Get on Board", fit: "check", tags: ["auto"],
@@ -532,10 +691,10 @@ footer a { color: var(--muted); }
     "Spanish speaking", "Spanish customer support", "remote Belgium", "remote EU", "anywhere in Europe",
     "atención al cliente", "teletrabajo", "soporte chat", "backoffice español", "asistente virtual",
     "Spaans thuiswerk", "Spaanstalig", "Spaans klantendienst", "telefonisch", "Spaans Nederlands",
-    "remote worldwide", "contractor", "100% remoto", "desde cualquier país", "LATAM remote"
+    "remote worldwide", "anywhere", "Remote (Global)", "contractor", "100% remoto", "desde cualquier país", "LATAM remote"
   ];
 
-  var CATS = ["buscar", "latam", "empresa", "tareas", "clases"];
+  var CATS = ["buscar", "mundo", "latam", "empresa", "tareas", "clases"];
   var html = document.documentElement;
   var lang = "es", filter = "all", estado = {};
   // Standaard Spaans (de app is voor haar). Wie op "Nederlands" tikt, houdt die keuze op dat toestel.
@@ -733,6 +892,12 @@ footer a { color: var(--muted); }
   }
 
   document.addEventListener("click", function (e) {
+    var tb = e.target.closest("[data-tab]"); if (tb) { setTab(tb.getAttribute("data-tab"), true); return; }
+    if (e.target.closest("#copiar-msg")) {
+      var m = document.getElementById("msg-empresa"), btn = e.target.closest("#copiar-msg");
+      try { navigator.clipboard.writeText(m.textContent).then(function () { btn.classList.add("copied"); setTimeout(function () { btn.classList.remove("copied"); }, 1500); }, function () { selectText(m); }); } catch (err) { selectText(m); }
+      return;
+    }
     var b = e.target.closest("[data-set-lang]"); if (b) { setLang(b.getAttribute("data-set-lang")); return; }
     var f = e.target.closest("[data-filter]"); if (f) { setFilter(f.getAttribute("data-filter")); return; }
     var q = e.target.closest("[data-quitar]"); if (q) { var qid = q.getAttribute("data-quitar"); guardar(qid, { oculto: true }); mostrarDeshacer(qid); return; }
@@ -761,6 +926,19 @@ footer a { color: var(--muted); }
   setLang(lang === "nl" ? "nl" : "es");
   setFilter(filter === "all" || CATS.indexOf(filter) > -1 ? filter : "all");
   listo = true;
+  function setTab(t, desdeClick) {
+    if (t !== "autonoma") t = "ofertas";
+    ["ofertas", "autonoma"].forEach(function (x) {
+      document.getElementById("tab-" + x).hidden = x !== t;
+      document.getElementById("tab-btn-" + x).setAttribute("aria-selected", String(x === t));
+    });
+    if (desdeClick) {
+      try { history.replaceState(null, "", t === "autonoma" ? "#autonoma" : location.pathname + location.search); } catch (e) {}
+      window.scrollTo(0, 0);
+    }
+  }
+  setTab(location.hash === "#autonoma" ? "autonoma" : "ofertas", false);
+  window.addEventListener("hashchange", function () { setTab(location.hash === "#autonoma" ? "autonoma" : "ofertas", false); });
   conectarDb();
 })();
 </script>
