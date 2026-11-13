@@ -94,8 +94,8 @@ header { display: grid; gap: 14px; }
 .quitar { border: 1px solid var(--line); background: transparent; color: var(--muted); font: inherit; font-size: 0.85rem; padding: 4px 10px; border-radius: 999px; cursor: pointer; }
 .quitar:hover { border-color: var(--no); color: var(--no); background: var(--no-soft); }
 .sync { font-size: 0.88rem; color: var(--muted); }
-.sync[data-s="ok"] { color: var(--ok); }
-.sync[data-s="error"], .sync[data-s="lento"] { color: var(--no); }
+.sync[data-s="ok"], .sync[data-s="okg"] { color: var(--ok); }
+.sync[data-s="error"], .sync[data-s="lento"], .sync[data-s="errorg"], .sync[data-s="lentog"] { color: var(--no); }
 .papelera { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
 .papelera summary { cursor: pointer; font-weight: 700; }
 .papelera[open] { display: grid; gap: 10px; }
@@ -507,10 +507,36 @@ footer a { color: var(--muted); }
   function guardar(id, patch) {
     var nuevo = Object.assign({}, st(id), patch);
     estado[id] = nuevo; saveLocal(); render();
-    if (!db) return;
     var prev = colaEscritura[id] || Promise.resolve();
-    colaEscritura[id] = prev.then(function () { return db.collection("estado").doc(id).set(nuevo); })
-      .catch(function () { setSync("error"); });
+    if (db) {
+      colaEscritura[id] = prev.then(function () { return db.collection("estado").doc(id).set(nuevo); })
+        .catch(function () { setSync("error"); });
+    } else if (SYNC_URL) {
+      // Google-rekenblad: zelfde keuzes op gsm en laptop. Gewone tekst-POST, zodat de browser geen extra controle vraagt.
+      colaEscritura[id] = prev.then(function () {
+        return fetch(SYNC_URL, { method: "POST", body: JSON.stringify({ id: id, hecho: !!nuevo.hecho, oculto: !!nuevo.oculto }) })
+          .then(function (r) { return r.json(); })
+          .then(function (d) { if (!d || !d.ok) throw new Error("no ok"); setSync("okg"); });
+      }).catch(function () { setSync("errorg"); });
+    }
+  }
+
+  // Adres van het opslagscript in het Google-rekenblad "Remoto ES – keuzes" (zie google-script.gs).
+  var SYNC_URL = "https://script.google.com/macros/s/AKfycbztcjQ8eIyoTJS1iMglRTglNrwQ7XZdI-jdWZou6nBMYkyWS4ydUugM5HoulioLWfWP/exec";
+  var googleBezig = false, googleEerste = true;
+  function laadGoogle() {
+    if (!SYNC_URL || googleBezig) return;
+    googleBezig = true;
+    fetch(SYNC_URL).then(function (r) { return r.json(); }).then(function (d) {
+      if (!d || !d.ok) throw new Error("no ok");
+      var remoto = d.estado || {};
+      if (googleEerste) {
+        googleEerste = false;
+        // Eerste keer: wat op dit toestel al gekozen was, mee naar de gedeelde lijst.
+        Object.keys(estado).forEach(function (k) { if (!remoto[k] && (estado[k].hecho || estado[k].oculto)) { remoto[k] = estado[k]; setTimeout(function () { guardar(k, {}); }, 0); } });
+      }
+      estado = remoto; saveLocal(); render(); setSync("okg");
+    }).catch(function () { setSync("lentog"); }).then(function () { googleBezig = false; });
   }
   function setSync(s) {
     var el = document.getElementById("sync"); if (!el) return;
@@ -520,16 +546,24 @@ footer a { color: var(--muted); }
       cargando: { es: "Cargando tu lista…", nl: "Je lijst wordt geladen…" },
       ok: { es: "Guardado para todos los que usan esta página", nl: "Bewaard voor iedereen die deze pagina gebruikt" },
       lento: { es: "No se puede conectar ahora; los cambios quizá no se guarden", nl: "Nu geen verbinding; wijzigingen worden misschien niet bewaard" },
-      error: { es: "No se pudo guardar. ¿Tienes permiso para editar esta página?", nl: "Bewaren lukte niet. Heb je bewerkrechten op deze pagina?" }
+      error: { es: "No se pudo guardar. ¿Tienes permiso para editar esta página?", nl: "Bewaren lukte niet. Heb je bewerkrechten op deze pagina?" },
+      okg: { es: "Sincronizado entre tu móvil y tu ordenador", nl: "Gelijk op gsm en laptop" },
+      lentog: { es: "Sin conexión: se muestra la última lista guardada en este aparato", nl: "Geen verbinding: je ziet de laatst bewaarde lijst van dit toestel" },
+      errorg: { es: "No se pudo guardar online. Revisa tu conexión e inténtalo otra vez.", nl: "Online bewaren lukte niet. Controleer je verbinding en probeer opnieuw." }
     }[s];
     el.innerHTML = bi(txt);
   }
   function conectarDb() {
     var c = window.claude;
-    if (!c || typeof c.use !== "function") { setSync("local"); return; }
+    var zonderDb = function () {
+      if (!SYNC_URL) { setSync("local"); return; }
+      setSync("cargando"); laadGoogle();
+      document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") laadGoogle(); });
+    };
+    if (!c || typeof c.use !== "function") { zonderDb(); return; }
     setSync("cargando");
     c.use("db").then(function (d) {
-      if (!d) { setSync("local"); return; }
+      if (!d) { zonderDb(); return; }
       db = d;
       var timer = setTimeout(function () { setSync("lento"); }, 10000);
       var primera = true;
