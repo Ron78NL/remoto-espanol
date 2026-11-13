@@ -116,6 +116,15 @@ header { display: grid; gap: 14px; }
 .tabla thead th { border-top: 0; color: var(--muted); font-size: .85rem; text-transform: uppercase; letter-spacing: .05em; }
 .tabla td.num { font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 700; }
 .links { display: flex; flex-wrap: wrap; gap: 8px; }
+.tr-box { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 12px; }
+.tr-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.tr-box select, .tr-box textarea { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+.tr-box textarea { width: 100%; resize: vertical; min-height: 8em; }
+.tr-uitleg { margin: 0; font-size: .95rem; }
+.tr-resultado { display: grid; gap: 10px; border-top: 1px solid var(--line); padding-top: 12px; }
+.tr-out { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--bg); border-radius: 8px; padding: 12px; }
+.tr-expl { white-space: pre-wrap; font-size: .95rem; }
+.go[disabled] { opacity: .6; cursor: wait; }
 .note { font-size: 0.95rem; background: var(--check-soft); border-radius: var(--radius); padding: 12px 14px; }
 .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 @media (max-width: 680px) { .cards { grid-template-columns: 1fr; } }
@@ -190,6 +199,7 @@ footer a { color: var(--muted); }
 <nav class="tabs" role="tablist" aria-label="Secciones">
   <button type="button" role="tab" id="tab-btn-ofertas" data-tab="ofertas" aria-selected="true" aria-controls="tab-ofertas"><span lang="es">Buscar trabajo</span><span lang="nl">Werk zoeken</span></button>
   <button type="button" role="tab" id="tab-btn-autonoma" data-tab="autonoma" aria-selected="false" aria-controls="tab-autonoma"><span lang="es">Trabajar como autónoma</span><span lang="nl">Werken als zelfstandige</span></button>
+  <button type="button" role="tab" id="tab-btn-traductor" data-tab="traductor" aria-selected="false" aria-controls="tab-traductor"><span lang="es">Traductor</span><span lang="nl">Vertaler</span></button>
 </nav>
 
 <div class="panel" id="tab-ofertas" role="tabpanel" aria-labelledby="tab-btn-ofertas">
@@ -421,6 +431,45 @@ footer a { color: var(--muted); }
   <p class="muted" style="font-size:.9rem"><span lang="es">Esto es una explicación, no un consejo legal. Cifras de 2026 según VLAIO, Unizo, Accountable y la Cámara belga. Confírmalas siempre con tu caja de seguro social.</span><span lang="nl">Dit is uitleg, geen juridisch advies. Bedragen van 2026 volgens VLAIO, Unizo, Accountable en de Kamer. Laat ze altijd bevestigen door het sociaal verzekeringsfonds.</span></p>
 </section>
 
+</div>
+
+<div class="panel" id="tab-traductor" role="tabpanel" aria-labelledby="tab-btn-traductor" hidden>
+<section aria-labelledby="h-tr">
+  <h2 id="h-tr"><span lang="es">Traductor y corrector</span><span lang="nl">Vertaler en verbeteraar</span></h2>
+  <p class="lead"><span lang="es">Traduce mensajes, corrige lo que escribes en neerlandés o inglés, o deja que te escriba un correo profesional. Funciona con inteligencia artificial (Claude).</span><span lang="nl">Vertaal berichten, laat Nederlandse of Engelse tekst verbeteren, of laat een professionele mail opstellen. Werkt met artificiële intelligentie (Claude).</span></p>
+
+  <div class="tr-box">
+    <div class="tr-row" role="group" aria-label="Modo">
+      <button type="button" class="chip" data-modo="traducir" aria-pressed="true"><span lang="es">Traducir</span><span lang="nl">Vertalen</span></button>
+      <button type="button" class="chip" data-modo="corregir" aria-pressed="false"><span lang="es">Corregir mi texto</span><span lang="nl">Mijn tekst verbeteren</span></button>
+      <button type="button" class="chip" data-modo="redactar" aria-pressed="false"><span lang="es">Escribir un mensaje</span><span lang="nl">Bericht laten schrijven</span></button>
+    </div>
+    <p class="muted tr-uitleg" id="tr-uitleg"></p>
+    <label class="tr-row" for="tr-a"><span id="tr-a-label"></span>
+      <select id="tr-a">
+        <option value="nl">Nederlands</option>
+        <option value="en">English</option>
+        <option value="es">Español</option>
+        <option value="fr">Français</option>
+      </select>
+    </label>
+    <textarea id="tr-texto" rows="6" maxlength="4000"></textarea>
+    <div class="tr-row">
+      <button type="button" class="go" id="tr-go"></button>
+      <span class="muted" id="tr-estado" aria-live="polite"></span>
+    </div>
+    <div class="tr-resultado" id="tr-resultado" hidden>
+      <div class="tr-out" id="tr-out"></div>
+      <div class="tr-row"><button type="button" class="go alt" id="tr-copiar"><span lang="es">Copiar resultado</span><span lang="nl">Resultaat kopiëren</span></button></div>
+      <div class="tr-expl muted" id="tr-expl" hidden></div>
+    </div>
+  </div>
+
+  <p class="muted" style="font-size:.9rem"><span lang="es">¿No funciona o se acabó el límite del día? Usa DeepL, que también traduce muy bien:</span><span lang="nl">Werkt het niet of is het dagmaximum bereikt? Gebruik DeepL, dat ook heel goed vertaalt:</span>
+    <a href="https://www.deepl.com/translator" id="tr-deepl" target="_blank" rel="noopener">DeepL</a> ·
+    <a href="https://translate.google.com" target="_blank" rel="noopener">Google Translate</a></p>
+  <p class="muted" style="font-size:.9rem"><span lang="es">No pongas aquí contraseñas ni números de cuenta. El texto se envía a Claude para traducirlo.</span><span lang="nl">Zet hier geen wachtwoorden of rekeningnummers in. De tekst wordt naar Claude gestuurd om te vertalen.</span></p>
+</section>
 </div>
 
 <footer>
@@ -881,7 +930,7 @@ footer a { color: var(--muted); }
     lang = l; html.setAttribute("data-lang", l); html.setAttribute("lang", l);
     document.querySelectorAll("[data-set-lang]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-set-lang") === l)); });
     try { localStorage.setItem("rr-lang", l); } catch (e) {}
-    if (listo) render();   // keuzelijsten hebben teksten per taal
+    if (listo) { render(); if (typeof trPintar === "function") trPintar(); }   // keuzelijsten en plaatshouders hebben teksten per taal
   }
   var listo = false;
   function setFilter(f) {
@@ -927,18 +976,83 @@ footer a { color: var(--muted); }
   setFilter(filter === "all" || CATS.indexOf(filter) > -1 ? filter : "all");
   listo = true;
   function setTab(t, desdeClick) {
-    if (t !== "autonoma") t = "ofertas";
-    ["ofertas", "autonoma"].forEach(function (x) {
+    if (t !== "autonoma" && t !== "traductor") t = "ofertas";
+    ["ofertas", "autonoma", "traductor"].forEach(function (x) {
       document.getElementById("tab-" + x).hidden = x !== t;
       document.getElementById("tab-btn-" + x).setAttribute("aria-selected", String(x === t));
     });
     if (desdeClick) {
-      try { history.replaceState(null, "", t === "autonoma" ? "#autonoma" : location.pathname + location.search); } catch (e) {}
+      try { history.replaceState(null, "", t === "ofertas" ? location.pathname + location.search : "#" + t); } catch (e) {}
       window.scrollTo(0, 0);
     }
   }
-  setTab(location.hash === "#autonoma" ? "autonoma" : "ofertas", false);
-  window.addEventListener("hashchange", function () { setTab(location.hash === "#autonoma" ? "autonoma" : "ofertas", false); });
+  setTab(location.hash.slice(1), false);
+  window.addEventListener("hashchange", function () { setTab(location.hash.slice(1), false); });
+
+  // Vertaler: praat met hetzelfde Google-script (accion "traducir"), dat Claude aanroept.
+  var TR = {
+    modo: "traducir",
+    textos: {
+      traducir: { uitleg: { es: "Escribe o pega un texto en cualquier idioma y elige a qué idioma traducirlo.", nl: "Typ of plak tekst in eender welke taal en kies naar welke taal." }, a: { es: "Traducir al:", nl: "Vertalen naar:" }, go: { es: "Traducir", nl: "Vertalen" }, ph: { es: "Pega aquí el texto…", nl: "Plak hier de tekst…" } },
+      corregir: { uitleg: { es: "Escribe tú el texto en neerlandés o inglés. Lo corregimos y te explicamos en español los errores principales.", nl: "Schrijf zelf de tekst in het Nederlands of Engels. Hij wordt verbeterd, met uitleg in het Spaans over de belangrijkste fouten." }, a: { es: "Idioma de tu texto:", nl: "Taal van je tekst:" }, go: { es: "Corregir", nl: "Verbeteren" }, ph: { es: "Ej.: Beste meneer, ik wil graag solliciteren voor de job als…", nl: "Bv.: Beste meneer, ik wil graag solliciteren voor de job als…" } },
+      redactar: { uitleg: { es: "Explica en español lo que quieres decir. Te escribimos un mensaje profesional listo para enviar, con traducción al español.", nl: "Leg in het Spaans uit wat je wil zeggen. Je krijgt een professioneel bericht om te versturen, met Spaanse vertaling." }, a: { es: "Escribir el mensaje en:", nl: "Bericht schrijven in:" }, go: { es: "Escribir mensaje", nl: "Bericht schrijven" }, ph: { es: "Ej.: quiero preguntar a Adecco si hay trabajos de atención al cliente con español", nl: "Bv.: ik wil Adecco vragen of er klantendienstjobs met Spaans zijn" } }
+    },
+    errores: {
+      sin_clave: { es: "El traductor aún no está activado. Usa DeepL mientras tanto.", nl: "De vertaler is nog niet geactiveerd. Gebruik intussen DeepL." },
+      limite: { es: "Se alcanzó el límite de hoy. Mañana vuelve a funcionar; mientras tanto usa DeepL.", nl: "Het dagmaximum is bereikt. Morgen werkt het weer; gebruik intussen DeepL." },
+      vacio: { es: "Escribe primero un texto.", nl: "Typ eerst een tekst." },
+      ocupado: { es: "El servicio está muy ocupado. Prueba otra vez en un minuto.", nl: "De dienst is erg druk. Probeer over een minuut opnieuw." },
+      rechazo: { es: "No se pudo procesar este texto. Prueba a escribirlo de otra forma.", nl: "Deze tekst kon niet verwerkt worden. Probeer het anders te formuleren." },
+      red: { es: "No hay conexión. Revisa internet y prueba otra vez.", nl: "Geen verbinding. Controleer het internet en probeer opnieuw." },
+      api: { es: "Algo salió mal. Prueba otra vez o usa DeepL.", nl: "Er ging iets mis. Probeer opnieuw of gebruik DeepL." }
+    }
+  };
+  function trPintar() {
+    var t = TR.textos[TR.modo];
+    document.querySelectorAll("[data-modo]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-modo") === TR.modo)); });
+    document.getElementById("tr-uitleg").innerHTML = bi(t.uitleg);
+    document.getElementById("tr-a-label").innerHTML = bi(t.a);
+    document.getElementById("tr-go").innerHTML = bi(t.go);
+    document.getElementById("tr-texto").placeholder = t.ph[lang];
+  }
+  // Alleen vet en cursief uit de uitleg tonen; alles eerst veilig maken.
+  function mdLigero(t) { return esc(t).replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>").replace(/\*([^*\n]+)\*/g, "<i>$1</i>"); }
+  function trEstado(o) { document.getElementById("tr-estado").innerHTML = o ? bi(o) : ""; }
+  function trEnviar() {
+    var texto = document.getElementById("tr-texto").value;
+    if (!texto.replace(/\s/g, "")) { trEstado(TR.errores.vacio); return; }
+    if (!SYNC_URL) { trEstado(TR.errores.sin_clave); return; }
+    var btn = document.getElementById("tr-go"); btn.disabled = true;
+    trEstado({ es: "Trabajando… (unos segundos)", nl: "Bezig… (enkele seconden)" });
+    fetch(SYNC_URL, { method: "POST", body: JSON.stringify({ accion: "traducir", modo: TR.modo, a: document.getElementById("tr-a").value, texto: texto }) })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d || !d.ok) { trEstado(TR.errores[(d && d.error) || "api"] || TR.errores.api); return; }
+        var partes = String(d.resultado || "").split(/\n\s*---\s*\n/);
+        document.getElementById("tr-out").textContent = partes[0].trim();
+        var ex = document.getElementById("tr-expl");
+        ex.hidden = partes.length < 2; ex.innerHTML = mdLigero(partes.slice(1).join("\n").trim());
+        document.getElementById("tr-resultado").hidden = false;
+        trEstado(null);
+      })
+      .catch(function () { trEstado(TR.errores.red); })
+      .then(function () { btn.disabled = false; });
+  }
+  document.addEventListener("click", function (e) {
+    var m = e.target.closest("[data-modo]"); if (m) { TR.modo = m.getAttribute("data-modo"); trPintar(); return; }
+    if (e.target.closest("#tr-go")) { trEnviar(); return; }
+    var c = e.target.closest("#tr-copiar");
+    if (c) {
+      var out = document.getElementById("tr-out");
+      try { navigator.clipboard.writeText(out.textContent).then(function () { c.classList.add("copied"); setTimeout(function () { c.classList.remove("copied"); }, 1500); }, function () { selectText(out); }); } catch (err) { selectText(out); }
+    }
+  });
+  // DeepL-link opent met dezelfde tekst (via # in de link, niet naar een server gestuurd)
+  document.getElementById("tr-deepl").addEventListener("click", function () {
+    var t = document.getElementById("tr-texto").value.slice(0, 1500), a = document.getElementById("tr-a").value;
+    if (t) this.href = "https://www.deepl.com/translator#auto/" + a + "/" + encodeURIComponent(t);
+  });
+  trPintar();
   conectarDb();
 })();
 </script>

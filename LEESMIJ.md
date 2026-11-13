@@ -15,3 +15,9 @@ Taalknop Spaans ↔ Nederlands.
 - Keuzes worden bewaard in het Google-rekenblad "Remoto ES – keuzes (niet verwijderen)" in Ron's Drive.
 - Het script daarachter staat in `google-script.gs` (kopie) en is gepubliceerd als web-app; het adres staat in `index.html` als `SYNC_URL`.
 - Zonder internet toont de site de laatst bewaarde lijst van dat toestel.
+
+## Vertaler (tabblad "Traductor")
+- Vertalen, eigen tekst laten verbeteren (met uitleg in het Spaans) of een bericht laten schrijven.
+- Loopt via hetzelfde Google-script (`accion: "traducir"`), dat Claude aanroept (model claude-sonnet-5-5; ander model kan via scripteigenschap `MODEL`).
+- De Anthropic-sleutel staat in het script onder Projectinstellingen → Scripteigenschappen → `ANTHROPIC_API_KEY` (nooit in de code).
+- Maximaal 60 vertalingen per dag (`MAX_PER_DAG` in het script), zodat de kosten beperkt blijven.
